@@ -1,0 +1,6 @@
+{
+  "name": "Multi Play! Times Tables Adventure",
+  "description": "A playful, child-friendly multiplication and times table learning adventure with mini-games, visual explanations, and audio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
