@@ -485,50 +485,87 @@ export const SunVector: React.FC<{ size?: number; className?: string }> = ({
   size = 72,
   className = '',
 }) => {
+  const id = React.useId().replace(/:/g, '');
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 100 100"
+      viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={`drop-shadow-lg select-none ${className}`}
+      className={`drop-shadow-md select-none ${className}`}
     >
-      <circle cx="50" cy="50" r="26" fill="#facc15" />
-      <circle cx="50" cy="50" r="22" fill="#fde047" />
-      {/* Rays */}
-      {Array.from({ length: 8 }).map((_, i) => {
-        const angle = (i * 45 * Math.PI) / 180;
-        const x1 = 50 + Math.cos(angle) * 32;
-        const y1 = 50 + Math.sin(angle) * 32;
-        const x2 = 50 + Math.cos(angle) * 44;
-        const y2 = 50 + Math.sin(angle) * 44;
-        return (
-          <line
-            key={i}
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
-            stroke="#eab308"
-            strokeWidth="5"
-            strokeLinecap="round"
-          />
-        );
-      })}
-      {/* Friendly Face */}
-      <circle cx="43" cy="46" r="3" fill="#854d0e" />
-      <circle cx="57" cy="46" r="3" fill="#854d0e" />
-      <path
-        d="M44 54 Q50 60 56 54"
-        stroke="#854d0e"
-        strokeWidth="3"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* Rosy Cheeks */}
-      <circle cx="38" cy="52" r="3" fill="#f87171" opacity="0.6" />
-      <circle cx="62" cy="52" r="3" fill="#f87171" opacity="0.6" />
+      <defs>
+        <radialGradient id={`sunGrad-${id}`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#fffbeb" />
+          <stop offset="35%" stopColor="#fef08a" />
+          <stop offset="70%" stopColor="#fde047" />
+          <stop offset="100%" stopColor="#f59e0b" />
+        </radialGradient>
+        <linearGradient id={`rayGrad-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fde047" />
+          <stop offset="100%" stopColor="#ea580c" />
+        </linearGradient>
+        <filter id={`sunGlow-${id}`} x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+
+      {/* Sun Rays - 12 alternating radiating petal rays */}
+      <g filter={`url(#sunGlow-${id})`}>
+        {Array.from({ length: 12 }).map((_, i) => {
+          const angle = i * 30;
+          const isLong = i % 2 === 0;
+          const length = isLong ? 54 : 46;
+          const width = isLong ? 7 : 5;
+          return (
+            <line
+              key={i}
+              x1="60"
+              y1="60"
+              x2={60 + Math.sin((angle * Math.PI) / 180) * length}
+              y2={60 - Math.cos((angle * Math.PI) / 180) * length}
+              stroke={`url(#rayGrad-${id})`}
+              strokeWidth={width}
+              strokeLinecap="round"
+              opacity={isLong ? 0.95 : 0.8}
+            />
+          );
+        })}
+      </g>
+
+      {/* Outer Sun Glow Ring */}
+      <circle cx="60" cy="60" r="33" fill="#fef08a" opacity="0.4" />
+
+      {/* Main Sun Body */}
+      <circle cx="60" cy="60" r="30" fill={`url(#sunGrad-${id})`} stroke="#f59e0b" strokeWidth="2.5" />
+
+      {/* Cute Kawaii Eyes with Sparkle Highlights */}
+      <g>
+        {/* Left Eye */}
+        <circle cx="51" cy="55" r="4" fill="#451a03" />
+        <circle cx="49.5" cy="53.5" r="1.5" fill="#ffffff" />
+        <circle cx="52.5" cy="56.5" r="0.8" fill="#ffffff" />
+
+        {/* Right Eye */}
+        <circle cx="69" cy="55" r="4" fill="#451a03" />
+        <circle cx="67.5" cy="53.5" r="1.5" fill="#ffffff" />
+        <circle cx="70.5" cy="56.5" r="0.8" fill="#ffffff" />
+
+        {/* Cheerful Open Smile */}
+        <path
+          d="M53 64 Q60 72 67 64"
+          stroke="#451a03"
+          strokeWidth="2.8"
+          strokeLinecap="round"
+          fill="#dc2626"
+        />
+
+        {/* Rosy Glowing Cheeks */}
+        <ellipse cx="44" cy="62" rx="4" ry="2.5" fill="#f43f5e" opacity="0.65" />
+        <ellipse cx="76" cy="62" rx="4" ry="2.5" fill="#f43f5e" opacity="0.65" />
+      </g>
     </svg>
   );
 };
@@ -537,30 +574,56 @@ export const MoonVector: React.FC<{ size?: number; className?: string }> = ({
   size = 72,
   className = '',
 }) => {
+  const id = React.useId().replace(/:/g, '');
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 100 100"
+      viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={`drop-shadow-lg select-none ${className}`}
+      className={`drop-shadow-md select-none ${className}`}
     >
+      <defs>
+        <linearGradient id={`moonGrad-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fef08a" />
+          <stop offset="60%" stopColor="#facc15" />
+          <stop offset="100%" stopColor="#eab308" />
+        </linearGradient>
+      </defs>
+
+      {/* Crescent Moon */}
       <path
-        d="M70 18 C50 18 34 34 34 54 C34 74 50 90 70 90 C78 90 84 88 88 84 C68 84 54 70 54 54 C54 38 68 24 88 24 C84 20 78 18 70 18 Z"
-        fill="#fde047"
+        d="M82 22 C56 22 36 42 36 66 C36 90 56 110 82 110 C92 110 99 107 104 102 C78 102 60 84 60 64 C60 44 78 26 104 26 C99 23 92 22 82 22 Z"
+        fill={`url(#moonGrad-${id})`}
+        stroke="#ca8a04"
+        strokeWidth="2"
       />
-      <circle cx="62" cy="48" r="2.5" fill="#854d0e" />
+
+      {/* Sleeping Cute Face on Moon */}
+      {/* Eye (Curved closed happy lash) */}
       <path
-        d="M60 56 Q64 60 68 56"
-        stroke="#854d0e"
+        d="M68 58 Q73 63 78 58"
+        stroke="#713f12"
         strokeWidth="2.5"
         strokeLinecap="round"
         fill="none"
       />
-      {/* Little Stars */}
-      <polygon points="24,28 26,34 32,34 27,38 29,44 24,40 19,44 21,38 16,34 22,34" fill="#ffffff" />
-      <polygon points="18,68 19,72 23,72 20,75 21,79 18,76 15,79 16,75 13,72 17,72" fill="#ffffff" />
+      {/* Soft Smile */}
+      <path
+        d="M69 70 Q74 74 79 70"
+        stroke="#713f12"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* Cheek */}
+      <ellipse cx="78" cy="65" rx="3.5" ry="2" fill="#f43f5e" opacity="0.6" />
+
+      {/* Twinkling Mini Stars Around */}
+      <polygon points="28,32 30,38 36,38 31,42 33,48 28,44 23,48 25,42 20,38 26,38" fill="#fef08a" />
+      <polygon points="20,78 22,82 26,82 23,85 24,89 20,86 16,89 17,85 14,82 18,82" fill="#ffffff" opacity="0.9" />
+      <polygon points="98,14 99,17 103,17 100,19 101,23 98,20 95,23 96,19 93,17 97,17" fill="#ffffff" opacity="0.85" />
     </svg>
   );
 };

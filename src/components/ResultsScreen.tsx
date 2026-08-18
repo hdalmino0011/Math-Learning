@@ -52,7 +52,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 bg-gradient-to-b from-sky-100 via-amber-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 select-none">
+    <div className="h-screen h-[100dvh] max-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-4 overflow-y-auto bg-gradient-to-b from-sky-100 via-amber-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 select-none">
       <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-10 border-4 border-amber-400 dark:border-slate-700 shadow-2xl text-center flex flex-col items-center animate-scaleUp">
         {/* Vector Trophy */}
         <div className="relative mb-2">

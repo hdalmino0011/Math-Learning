@@ -11,11 +11,20 @@
     color-scheme: dark;
   }
 
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   body {
     font-family: 'Nunito', system-ui, -apple-system, sans-serif;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     color: #0f172a;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .dark body, body.dark {
@@ -30,7 +39,7 @@
 /* Landscape Mode Game Support */
 @media screen and (orientation: landscape) {
   body {
-    overflow-y: auto;
+    overflow: hidden;
   }
 }
 
