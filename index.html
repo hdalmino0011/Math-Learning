@@ -14,9 +14,9 @@
 
     <!-- Mobile Standalone Web App Meta Tags (iOS & Android) -->
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Multi Play" />
+    <meta name="apple-web-app-capable" content="yes" />
+    <meta name="apple-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-web-app-title" content="Multi Play" />
     <meta name="format-detection" content="telephone=no" />
 
     <!-- Google Fonts -->
@@ -24,23 +24,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Service Worker Registration Script -->
+    <!-- Standard PWA Service Worker Registration -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js')
             .then((reg) => {
-              console.log('Multi Play Service Worker registered with scope:', reg.scope);
+              console.log('Multi Play Service Worker registered:', reg.scope);
             })
             .catch((err) => {
-              console.log('Service Worker registration failed:', err);
+              console.log('Service Worker registration skipped:', err);
             });
         });
       }
     </script>
   </head>
-  <body class="bg-sky-50 text-slate-800 antialiased select-none font-sans overflow-x-hidden">
+  <body class="bg-sky-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 antialiased select-none font-sans overflow-x-hidden">
     <div id="root"></div>
-    <script type="module" src="./src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

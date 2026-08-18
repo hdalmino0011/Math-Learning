@@ -1,4 +1,4 @@
-const CACHE_NAME = 'multi-play-v50';
+const CACHE_NAME = 'multi-play-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -39,7 +39,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Other assets: Cache First, then network fallback
+  // Other assets: Cache First with network fallback
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -59,7 +59,6 @@ self.addEventListener('fetch', (event) => {
         });
         return networkResponse;
       }).catch(() => {
-        // Fallback for media / assets if offline
         return caches.match(event.request);
       });
     })

@@ -101,16 +101,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col p-4 md:p-6 bg-gradient-to-b from-sky-100 via-sky-50 to-emerald-50 dark:from-slate-900 dark:via-slate-850 dark:to-slate-900">
+    <div className="min-h-screen w-full flex flex-col p-4 md:p-6 bg-gradient-to-b from-sky-100 via-sky-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Top Navigation Bar */}
-      <header className="w-full max-w-6xl mx-auto flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+      <header className="w-full max-w-6xl mx-auto flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-800">
         <div className="flex items-center gap-2">
           <button
             onClick={() => {
               soundManager.playTap();
               onBackToSplash();
             }}
-            className="p-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl shadow-md border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 font-bold text-sm"
+            className="p-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-md border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 font-black text-sm"
             title="Back to Welcome Screen"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -120,7 +120,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <div className="w-9 h-9 rounded-xl bg-pink-500 text-amber-200 font-black text-xl flex items-center justify-center border-2 border-pink-300">
               ×
             </div>
-            <span className="text-xl md:text-2xl font-black text-slate-800 dark:text-amber-300 font-['Fredoka',sans-serif]">
+            <span className="text-xl md:text-2xl font-black text-slate-950 dark:text-amber-300 font-['Fredoka',sans-serif]">
               Multi Play!
             </span>
           </div>
@@ -134,7 +134,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             }}
             className={`p-3 rounded-2xl shadow-md border-2 transition-all hover:scale-105 active:scale-95 ${
               soundMuted
-                ? 'bg-slate-200 dark:bg-slate-700 text-slate-500 border-slate-300 dark:border-slate-600'
+                ? 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600'
                 : 'bg-emerald-500 text-white border-emerald-600'
             }`}
             title={soundMuted ? 'Unmute Sound' : 'Mute Sound'}
@@ -147,7 +147,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               soundManager.playTap();
               onOpenBadges();
             }}
-            className="p-3 bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-400 rounded-2xl shadow-md border-2 border-amber-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all"
+            className="p-3 bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-400 rounded-2xl shadow-md border-2 border-amber-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all"
             title="Badges"
           >
             <Award className="w-5 h-5" />
@@ -158,7 +158,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               soundManager.playTap();
               onOpenSettings();
             }}
-            className="p-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl shadow-md border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all"
+            className="p-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-md border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all"
             title="Settings"
           >
             <Settings className="w-5 h-5" />
@@ -169,10 +169,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Main Mode Selection Area */}
       <main className="flex-1 w-full max-w-6xl mx-auto flex flex-col items-center justify-center py-6">
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-5xl font-black text-slate-800 dark:text-slate-100 font-['Fredoka',sans-serif]">
+          <h2 className="text-3xl md:text-5xl font-black text-slate-950 dark:text-slate-100 font-['Fredoka',sans-serif]">
             Choose a Game
           </h2>
-          <p className="text-base md:text-lg font-bold text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-base md:text-lg font-black text-slate-700 dark:text-slate-300 mt-1">
             Pick your favorite adventure to start mastering your multiplication!
           </p>
         </div>
@@ -182,7 +182,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <button
               key={mode.id}
               onClick={() => handleModeClick(mode.id)}
-              className={`group relative flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800/90 rounded-3xl border-4 ${mode.borderColor} shadow-lg hover:shadow-2xl hover:-translate-y-1.5 active:translate-y-0.5 transition-all text-center overflow-hidden`}
+              className={`group relative flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-3xl border-4 ${mode.borderColor} shadow-lg hover:shadow-2xl hover:-translate-y-1.5 active:translate-y-0.5 transition-all text-center overflow-hidden cursor-pointer`}
             >
               {/* Card top decorative accent */}
               <div className={`absolute top-0 inset-x-0 h-3 bg-gradient-to-r ${mode.color}`}></div>
@@ -191,15 +191,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {mode.renderGraphic()}
               </div>
 
-              <h3 className="text-xl md:text-2xl font-black text-slate-800 dark:text-slate-100 mb-1 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+              <h3 className="text-xl md:text-2xl font-black text-slate-950 dark:text-slate-100 mb-1 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
                 {mode.title}
               </h3>
 
-              <p className="text-xs md:text-sm font-bold text-slate-500 dark:text-slate-400 line-clamp-2">
+              <p className="text-xs md:text-sm font-black text-slate-700 dark:text-slate-300 line-clamp-2">
                 {mode.subtitle}
               </p>
 
-              <div className="mt-4 px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-black text-xs group-hover:bg-amber-400 group-hover:text-amber-950 transition-colors">
+              <div className="mt-4 px-4 py-1.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-950 dark:text-slate-100 font-black text-xs group-hover:bg-amber-400 group-hover:text-amber-950 transition-colors">
                 Play Now ➔
               </div>
             </button>

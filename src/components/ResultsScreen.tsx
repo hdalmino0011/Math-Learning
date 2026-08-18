@@ -19,7 +19,6 @@ interface ResultsScreenProps {
 export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   score,
   total,
-  mode,
   table,
   onPlayAgain,
   onChooseTable,
@@ -53,8 +52,8 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 bg-gradient-to-b from-sky-100 via-amber-50 to-emerald-50 dark:from-slate-900 dark:via-slate-850 dark:to-slate-900 select-none">
-      <div className="w-full max-w-xl bg-white dark:bg-slate-850 rounded-3xl p-6 md:p-10 border-4 border-amber-300 dark:border-slate-700 shadow-2xl text-center flex flex-col items-center animate-scaleUp">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 bg-gradient-to-b from-sky-100 via-amber-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 select-none">
+      <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-10 border-4 border-amber-400 dark:border-slate-700 shadow-2xl text-center flex flex-col items-center animate-scaleUp">
         {/* Vector Trophy */}
         <div className="relative mb-2">
           <TrophyVector size={96} className="animate-bounce" />
@@ -73,28 +72,28 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         </div>
 
         {/* Headline */}
-        <h2 className="text-2xl md:text-4xl font-black text-slate-800 dark:text-slate-100 font-['Fredoka',sans-serif] mb-1">
+        <h2 className="text-2xl md:text-4xl font-black text-slate-950 dark:text-white font-['Fredoka',sans-serif] mb-1">
           {headline}
         </h2>
 
-        <p className="text-sm md:text-base font-bold text-slate-500 dark:text-slate-400 mb-6">
+        <p className="text-sm md:text-base font-black text-slate-700 dark:text-slate-300 mb-6">
           {subtitle}
         </p>
 
         {/* Score Badge */}
         <div className="bg-emerald-50 dark:bg-slate-800 px-8 py-4 rounded-3xl border-3 border-emerald-300 dark:border-emerald-700 shadow-inner mb-8 flex flex-col items-center">
-          <span className="text-xs uppercase font-extrabold tracking-widest text-emerald-700 dark:text-emerald-400 mb-1">
+          <span className="text-xs uppercase font-black tracking-widest text-emerald-800 dark:text-emerald-300 mb-1">
             Your Final Score
           </span>
           <div className="flex items-baseline gap-1">
-            <span className="text-5xl md:text-6xl font-black text-emerald-600 dark:text-emerald-400 font-['Fredoka',sans-serif]">
+            <span className="text-5xl md:text-6xl font-black text-emerald-700 dark:text-emerald-400 font-['Fredoka',sans-serif]">
               {score}
             </span>
-            <span className="text-2xl md:text-3xl font-black text-slate-400">
+            <span className="text-2xl md:text-3xl font-black text-slate-500 dark:text-slate-400">
               / {total}
             </span>
           </div>
-          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">
+          <span className="text-xs font-black text-slate-700 dark:text-slate-300 mt-1">
             {score === total ? 'Flawless Accuracy!' : `${total - score} to review`}
           </span>
         </div>
@@ -106,7 +105,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
               soundManager.playTap();
               onPlayAgain();
             }}
-            className="w-full py-3.5 px-5 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-black text-lg rounded-2xl shadow-[0_5px_0_#065f46] hover:shadow-[0_2px_0_#065f46] transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-5 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-black text-lg rounded-2xl shadow-[0_5px_0_#065f46] hover:shadow-[0_2px_0_#065f46] transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <RefreshCw className="w-5 h-5" />
             <span>Play Again</span>
@@ -117,7 +116,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
               soundManager.playTap();
               onChooseTable();
             }}
-            className="w-full py-3.5 px-5 bg-indigo-500 hover:bg-indigo-400 active:scale-95 text-white font-black text-lg rounded-2xl shadow-[0_5px_0_#3730a3] hover:shadow-[0_2px_0_#3730a3] transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black text-lg rounded-2xl shadow-[0_5px_0_#3730a3] hover:shadow-[0_2px_0_#3730a3] transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>Other Table</span>
             <ArrowRight className="w-5 h-5" />
@@ -128,7 +127,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
               soundManager.playTap();
               onOpenBadges();
             }}
-            className="w-full py-3 px-4 bg-amber-100 dark:bg-slate-700 hover:bg-amber-200 text-amber-900 dark:text-amber-300 font-black text-sm rounded-2xl border-2 border-amber-300 dark:border-slate-600 transition-all flex items-center justify-center gap-1.5"
+            className="w-full py-3 px-4 bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 text-amber-950 dark:text-amber-300 font-black text-sm rounded-2xl border-2 border-amber-400 dark:border-slate-700 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Award className="w-4 h-4" />
             <span>View Badges</span>
@@ -139,7 +138,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
               soundManager.playTap();
               onGoHome();
             }}
-            className="w-full py-3 px-4 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-black text-sm rounded-2xl border-2 border-slate-300 dark:border-slate-600 transition-all flex items-center justify-center gap-1.5"
+            className="w-full py-3 px-4 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-950 dark:text-slate-200 font-black text-sm rounded-2xl border-2 border-slate-300 dark:border-slate-700 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Home className="w-4 h-4" />
             <span>Game Menu</span>

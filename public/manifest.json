@@ -3,6 +3,7 @@
   "short_name": "Multi Play",
   "description": "Fun, offline-ready multiplication math games and times table practice for kids.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "landscape",
   "background_color": "#0d9488",

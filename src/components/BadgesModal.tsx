@@ -9,7 +9,6 @@ import {
   TrophyVector,
   BookVector,
   StarVector,
-  QuizCardsVector,
 } from './illustrations/VectorGraphics';
 
 interface StickerItem {
@@ -84,15 +83,15 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
-      <div className="relative w-full max-w-lg bg-white dark:bg-slate-850 rounded-3xl p-6 md:p-8 border-4 border-amber-300 dark:border-slate-700 shadow-2xl flex flex-col items-center text-center animate-scaleUp max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+      <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border-4 border-amber-300 dark:border-slate-700 shadow-2xl flex flex-col items-center text-center animate-scaleUp max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={() => {
             soundManager.playTap();
             onClose();
           }}
-          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-300 flex items-center justify-center hover:scale-105 active:scale-95 transition-all border-2 border-rose-300 dark:border-rose-700"
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-300 flex items-center justify-center hover:scale-105 active:scale-95 transition-all border-2 border-rose-300 dark:border-rose-700 cursor-pointer"
           title="Close Badges"
         >
           <X className="w-5 h-5" />
@@ -101,10 +100,10 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
         <div className="mb-2">
           <StarVector size={44} fill="#f59e0b" className="animate-bounce" />
         </div>
-        <h3 className="text-2xl md:text-3xl font-black text-slate-800 dark:text-slate-100 font-['Fredoka',sans-serif] mb-1">
+        <h3 className="text-2xl md:text-3xl font-black text-slate-950 dark:text-white font-['Fredoka',sans-serif] mb-1">
           My Sticker Book & Badges
         </h3>
-        <p className="text-xs md:text-sm font-bold text-slate-500 dark:text-slate-400 mb-6">
+        <p className="text-xs md:text-sm font-black text-slate-700 dark:text-slate-300 mb-6">
           Collect badges as you master each times table!
         </p>
 
@@ -119,24 +118,24 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
                 className={`p-3.5 rounded-2xl border-2 flex items-center gap-3 text-left transition-all ${
                   isUnlocked
                     ? 'bg-amber-50 dark:bg-slate-800 border-amber-300 dark:border-amber-600 shadow-sm'
-                    : 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 opacity-60'
+                    : 'bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-800 opacity-60'
                 }`}
               >
                 <div
                   className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner border-2 ${
                     isUnlocked
                       ? 'bg-amber-100 dark:bg-slate-700 border-amber-300 animate-bounce'
-                      : 'bg-slate-200 dark:bg-slate-800 border-slate-300 text-slate-400'
+                      : 'bg-slate-200 dark:bg-slate-800 border-slate-300 text-slate-500'
                   }`}
                 >
                   {isUnlocked ? sticker.renderGraphic() : <Lock className="w-5 h-5" />}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="font-extrabold text-sm text-slate-800 dark:text-slate-100 truncate">
+                  <div className="font-black text-sm text-slate-950 dark:text-white truncate">
                     {sticker.title}
                   </div>
-                  <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 line-clamp-2 leading-tight">
+                  <div className="text-[11px] font-black text-slate-700 dark:text-slate-300 line-clamp-2 leading-tight">
                     {sticker.description}
                   </div>
                 </div>
@@ -150,7 +149,7 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
             soundManager.playTap();
             onClose();
           }}
-          className="mt-6 w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-black text-base rounded-2xl shadow-md active:scale-95 transition-all"
+          className="mt-6 w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-black text-base rounded-2xl shadow-md active:scale-95 transition-all cursor-pointer"
         >
           Awesome! ➔
         </button>

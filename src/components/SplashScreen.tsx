@@ -29,7 +29,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto overflow-x-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-200 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 select-none">
+    <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto overflow-x-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-200 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-950 select-none">
       {/* Sky Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Sun / Moon Vector */}
@@ -61,16 +61,16 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         </div>
 
         {/* Floating Math Bubbles */}
-        <div className="hidden sm:block absolute top-1/4 left-4 md:left-12 bg-purple-500/95 text-white font-black px-4 py-2 rounded-2xl border-4 border-white shadow-lg text-lg md:text-2xl animate-bounce">
+        <div className="hidden sm:block absolute top-1/4 left-4 md:left-12 bg-purple-600 text-white font-black px-4 py-2 rounded-2xl border-4 border-white shadow-lg text-lg md:text-2xl animate-bounce">
           2 × 3 = 6
         </div>
-        <div className="hidden sm:block absolute top-1/3 right-4 md:right-16 bg-pink-500/95 text-white font-black px-4 py-2 rounded-2xl border-4 border-white shadow-lg text-lg md:text-2xl animate-bounce delay-300">
+        <div className="hidden sm:block absolute top-1/3 right-4 md:right-16 bg-pink-600 text-white font-black px-4 py-2 rounded-2xl border-4 border-white shadow-lg text-lg md:text-2xl animate-bounce delay-300">
           5 × 4 = 20
         </div>
-        <div className="hidden sm:block absolute bottom-24 left-6 md:left-20 bg-amber-500/95 text-white font-black px-4 py-2 rounded-2xl border-4 border-white shadow-lg text-lg md:text-2xl animate-bounce delay-700">
+        <div className="hidden sm:block absolute bottom-24 left-6 md:left-20 bg-amber-600 text-white font-black px-4 py-2 rounded-2xl border-4 border-white shadow-lg text-lg md:text-2xl animate-bounce delay-700">
           7 × 3 = 21
         </div>
-        <div className="hidden sm:block absolute bottom-20 right-6 md:right-20 bg-emerald-500/95 text-white font-black px-4 py-2 rounded-2xl border-4 border-white shadow-lg text-lg md:text-2xl animate-bounce delay-500">
+        <div className="hidden sm:block absolute bottom-20 right-6 md:right-20 bg-emerald-600 text-white font-black px-4 py-2 rounded-2xl border-4 border-white shadow-lg text-lg md:text-2xl animate-bounce delay-500">
           9 × 2 = 18
         </div>
 
@@ -86,7 +86,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
             soundManager.playTap();
             onOpenBadges();
           }}
-          className="p-2.5 md:p-3 bg-white/90 dark:bg-slate-800 text-amber-600 dark:text-amber-400 rounded-2xl shadow-lg border-2 border-amber-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 font-bold text-xs md:text-sm"
+          className="p-2.5 md:p-3 bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-400 rounded-2xl shadow-lg border-2 border-amber-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 font-black text-xs md:text-sm cursor-pointer"
           title="My Badges"
         >
           <Award className="w-5 h-5" />
@@ -98,7 +98,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
             soundManager.playTap();
             onOpenSettings();
           }}
-          className="p-2.5 md:p-3 bg-white/90 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl shadow-lg border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all"
+          className="p-2.5 md:p-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-lg border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all cursor-pointer"
           title="Game Settings"
         >
           <SettingsIcon className="w-5 h-5" />
@@ -106,9 +106,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
       </div>
 
       {/* Central Welcome Card */}
-      <div className="relative z-10 w-full max-w-xl my-auto bg-white/95 dark:bg-slate-850/95 backdrop-blur-md rounded-3xl p-5 md:p-8 border-4 border-amber-300 dark:border-slate-700 shadow-2xl text-center flex flex-col items-center max-h-[92vh] overflow-y-auto">
+      <div className="relative z-10 w-full max-w-xl my-auto bg-white dark:bg-slate-900 backdrop-blur-md rounded-3xl p-5 md:p-8 border-4 border-amber-400 dark:border-slate-700 shadow-2xl text-center flex flex-col items-center max-h-[92vh] overflow-y-auto">
         {/* Mini Pill Tag */}
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 font-extrabold text-xs md:text-sm uppercase tracking-wider mb-2 shadow-xs">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-950 dark:text-emerald-300 border border-emerald-400 dark:border-emerald-700 font-black text-xs md:text-sm uppercase tracking-wider mb-2 shadow-xs">
           <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           Learn • Play • Grow
         </div>
@@ -118,32 +118,32 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           <div className="w-10 h-10 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white font-black text-2xl md:text-4xl flex items-center justify-center border-4 border-rose-200 shadow-md transform -rotate-6">
             ×
           </div>
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-amber-500 dark:text-amber-400 drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)] font-['Fredoka',sans-serif]">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-amber-600 dark:text-amber-400 drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)] font-['Fredoka',sans-serif]">
             Multi Play!
           </h1>
         </div>
 
-        <p className="text-slate-600 dark:text-slate-300 text-sm md:text-lg font-bold mt-1 mb-4 max-w-md">
+        <p className="text-slate-900 dark:text-slate-200 text-sm md:text-lg font-black mt-1 mb-4 max-w-md">
           A colorful times-table adventure made just for you!
         </p>
 
         {/* Game Mini Vector Badges */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md mb-6">
-          <div className="bg-amber-50 dark:bg-slate-800 p-2 rounded-2xl border border-amber-200 dark:border-slate-700 flex flex-col items-center shadow-xs">
+          <div className="bg-amber-50 dark:bg-slate-800 p-2 rounded-2xl border border-amber-300 dark:border-slate-700 flex flex-col items-center shadow-xs">
             <FishVector size={32} variant={0} className="mb-0.5" />
-            <span className="text-[11px] md:text-xs font-black text-slate-700 dark:text-slate-300">Fish Catch</span>
+            <span className="text-[11px] md:text-xs font-black text-slate-950 dark:text-white">Fish Catch</span>
           </div>
-          <div className="bg-purple-50 dark:bg-slate-800 p-2 rounded-2xl border border-purple-200 dark:border-slate-700 flex flex-col items-center shadow-xs">
+          <div className="bg-purple-50 dark:bg-slate-800 p-2 rounded-2xl border border-purple-300 dark:border-slate-700 flex flex-col items-center shadow-xs">
             <ButterflyVector size={32} variant={0} className="mb-0.5" />
-            <span className="text-[11px] md:text-xs font-black text-slate-700 dark:text-slate-300">Butterfly</span>
+            <span className="text-[11px] md:text-xs font-black text-slate-950 dark:text-white">Butterfly</span>
           </div>
-          <div className="bg-rose-50 dark:bg-slate-800 p-2 rounded-2xl border border-rose-200 dark:border-slate-700 flex flex-col items-center shadow-xs">
+          <div className="bg-rose-50 dark:bg-slate-800 p-2 rounded-2xl border border-rose-300 dark:border-slate-700 flex flex-col items-center shadow-xs">
             <BalloonVector size={28} variant={0} className="mb-0.5" />
-            <span className="text-[11px] md:text-xs font-black text-slate-700 dark:text-slate-300">Balloon Pop</span>
+            <span className="text-[11px] md:text-xs font-black text-slate-950 dark:text-white">Balloon Pop</span>
           </div>
-          <div className="bg-emerald-50 dark:bg-slate-800 p-2 rounded-2xl border border-emerald-200 dark:border-slate-700 flex flex-col items-center shadow-xs">
+          <div className="bg-emerald-50 dark:bg-slate-800 p-2 rounded-2xl border border-emerald-300 dark:border-slate-700 flex flex-col items-center shadow-xs">
             <AppleVector size={32} className="mb-0.5" />
-            <span className="text-[11px] md:text-xs font-black text-slate-700 dark:text-slate-300">Harvest</span>
+            <span className="text-[11px] md:text-xs font-black text-slate-950 dark:text-white">Harvest</span>
           </div>
         </div>
 
@@ -151,7 +151,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         <button
           id="startBtn"
           onClick={handlePlayClick}
-          className="w-full max-w-sm py-3.5 md:py-4 px-6 md:px-8 bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500 hover:from-emerald-400 hover:to-green-400 active:scale-95 text-white font-black text-xl md:text-3xl rounded-full shadow-[0_6px_0_#065f46,0_12px_18px_rgba(0,0,0,0.18)] hover:shadow-[0_3px_0_#065f46,0_8px_12px_rgba(0,0,0,0.18)] transition-all flex items-center justify-center gap-3 border-4 border-emerald-200"
+          className="w-full max-w-sm py-3.5 md:py-4 px-6 md:px-8 bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500 hover:from-emerald-400 hover:to-green-400 active:scale-95 text-white font-black text-xl md:text-3xl rounded-full shadow-[0_6px_0_#065f46,0_12px_18px_rgba(0,0,0,0.18)] hover:shadow-[0_3px_0_#065f46,0_8px_12px_rgba(0,0,0,0.18)] transition-all flex items-center justify-center gap-3 border-4 border-emerald-200 cursor-pointer"
         >
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white text-emerald-600 flex items-center justify-center shadow-inner">
             <Play className="w-5 h-5 md:w-6 md:h-6 fill-current translate-x-0.5" />
