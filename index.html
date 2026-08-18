@@ -24,13 +24,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Standard PWA Service Worker Registration -->
+    <!-- Standard PWA Service Worker Registration with Auto-Update -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js')
             .then((reg) => {
               console.log('Multi Play Service Worker registered:', reg.scope);
+              // Proactively check for updates on each visit
+              reg.update();
             })
             .catch((err) => {
               console.log('Service Worker registration skipped:', err);
