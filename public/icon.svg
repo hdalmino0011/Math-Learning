@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="50%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded App Icon Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="#ffffff" stroke-width="12" stroke-opacity="0.3" />
+
+  <!-- Multi Play Times Badge -->
+  <circle cx="256" cy="220" r="140" fill="#ffffff" />
+  <circle cx="256" cy="220" r="125" fill="#f43f5e" />
+
+  <!-- Big Multiplication Cross -->
+  <path d="M 190 154 L 322 286 M 322 154 L 190 286" stroke="#ffffff" stroke-width="42" stroke-linecap="round" />
+
+  <!-- Golden Stars -->
+  <path d="M 100 90 L 110 115 L 135 118 L 115 135 L 120 160 L 100 145 L 80 160 L 85 135 L 65 118 L 90 115 Z" fill="url(#starGrad)" />
+  <path d="M 410 90 L 420 115 L 445 118 L 425 135 L 430 160 L 410 145 L 390 160 L 395 135 L 375 118 L 400 115 Z" fill="url(#starGrad)" />
+  <path d="M 256 360 L 268 390 L 298 394 L 274 414 L 280 444 L 256 426 L 232 444 L 238 414 L 214 394 L 244 390 Z" fill="url(#starGrad)" />
+
+  <!-- App Title Banner -->
+  <rect x="76" y="390" width="360" height="70" rx="35" fill="#fbbf24" stroke="#ffffff" stroke-width="8" />
+  <text x="256" y="438" font-family="Arial, sans-serif" font-size="34" font-weight="900" text-anchor="middle" fill="#78350f" letter-spacing="1">MULTI PLAY!</text>
+</svg>

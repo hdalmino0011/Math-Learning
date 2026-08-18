@@ -9,8 +9,14 @@ import { MemorizeScreen } from './components/MemorizeScreen';
 import { ResultsScreen } from './components/ResultsScreen';
 import { SettingsModal } from './components/SettingsModal';
 import { BadgesModal } from './components/BadgesModal';
+import { InstallPromptModal } from './components/InstallPromptModal';
 
 type AppScreen = 'splash' | 'home' | 'tables' | 'game' | 'memorize' | 'results';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('splash');
@@ -33,6 +39,19 @@ export default function App() {
   // Modals
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isBadgesOpen, setIsBadgesOpen] = useState<boolean>(false);
+  const [isInstallOpen, setIsInstallOpen] = useState<boolean>(false);
+
+  // PWA Install Prompt State
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isAppInstalled, setIsAppInstalled] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        (window.navigator as unknown as { standalone?: boolean }).standalone === true
+      );
+    }
+    return false;
+  });
 
   // Mastery and Badges Stats
   const [stats, setStats] = useState<GameStats>(() => {
@@ -48,6 +67,42 @@ export default function App() {
       unlockedStickers: ['first_play'],
     };
   });
+
+  // Capture PWA beforeinstallprompt event
+  useEffect(() => {
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    };
+
+    const handleAppInstalled = () => {
+      setIsAppInstalled(true);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleTriggerNativeInstall = async () => {
+    if (!deferredPrompt) return;
+    try {
+      await deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        setIsAppInstalled(true);
+      }
+      setDeferredPrompt(null);
+      setIsInstallOpen(false);
+    } catch (err) {
+      console.log('Installation prompt error:', err);
+    }
+  };
 
   // Apply dark mode class to root HTML
   useEffect(() => {
@@ -159,6 +214,7 @@ export default function App() {
           onStart={handleStartFromSplash}
           onOpenSettings={() => setIsSettingsOpen(true)}
           onOpenBadges={() => setIsBadgesOpen(true)}
+          onOpenInstall={() => setIsInstallOpen(true)}
         />
       )}
 
@@ -248,6 +304,7 @@ export default function App() {
         onChangeVolume={handleChangeVolume}
         darkMode={darkMode}
         onToggleDarkMode={handleToggleDarkMode}
+        onOpenInstall={() => setIsInstallOpen(true)}
       />
 
       {/* Badges & Sticker Book Modal */}
@@ -255,6 +312,15 @@ export default function App() {
         isOpen={isBadgesOpen}
         onClose={() => setIsBadgesOpen(false)}
         unlockedStickerIds={stats.unlockedStickers}
+      />
+
+      {/* PWA Install on Phone Modal */}
+      <InstallPromptModal
+        isOpen={isInstallOpen}
+        onClose={() => setIsInstallOpen(false)}
+        canPromptNative={!!deferredPrompt}
+        onTriggerInstall={handleTriggerNativeInstall}
+        isInstalled={isAppInstalled}
       />
     </div>
   );

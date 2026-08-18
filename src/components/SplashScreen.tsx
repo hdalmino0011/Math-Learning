@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Sparkles, Settings as SettingsIcon, Award } from 'lucide-react';
+import { Play, Sparkles, Settings as SettingsIcon, Award, Download, Smartphone } from 'lucide-react';
 import { soundManager } from '../utils/audio';
 import {
   SunVector,
@@ -15,12 +15,14 @@ interface SplashScreenProps {
   onStart: () => void;
   onOpenSettings: () => void;
   onOpenBadges: () => void;
+  onOpenInstall: () => void;
 }
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({
   onStart,
   onOpenSettings,
   onOpenBadges,
+  onOpenInstall,
 }) => {
   const handlePlayClick = () => {
     soundManager.unlockAudio();
@@ -84,6 +86,18 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         <button
           onClick={() => {
             soundManager.playTap();
+            onOpenInstall();
+          }}
+          className="p-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl shadow-lg border-2 border-emerald-300 hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 font-black text-xs md:text-sm animate-pulse"
+          title="Install on Phone"
+        >
+          <Download className="w-4 h-4" />
+          <span>Install App</span>
+        </button>
+
+        <button
+          onClick={() => {
+            soundManager.playTap();
             onOpenBadges();
           }}
           className="p-3 bg-white/90 dark:bg-slate-800 text-amber-600 dark:text-amber-400 rounded-2xl shadow-lg border-2 border-amber-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 font-bold text-sm"
@@ -92,6 +106,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           <Award className="w-5 h-5" />
           <span className="hidden sm:inline">Badges</span>
         </button>
+
         <button
           onClick={() => {
             soundManager.playTap();
@@ -158,9 +173,17 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           <span>Let's Play!</span>
         </button>
 
-        <p className="text-xs md:text-sm font-bold text-slate-400 dark:text-slate-400 mt-4">
-          Tap Play to choose your game & times table!
-        </p>
+        {/* Install on Mobile button inside card */}
+        <button
+          onClick={() => {
+            soundManager.playTap();
+            onOpenInstall();
+          }}
+          className="mt-4 flex items-center gap-1.5 text-xs md:text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 underline underline-offset-4 decoration-emerald-400"
+        >
+          <Smartphone className="w-4 h-4 text-emerald-500" />
+          <span>Tap here to install Multi Play on your phone</span>
+        </button>
       </div>
     </div>
   );

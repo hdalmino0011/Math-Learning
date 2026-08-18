@@ -1,6 +1,6 @@
 import React from 'react';
 import { soundManager } from '../utils/audio';
-import { X, Volume2, VolumeX, Moon, Sun, ShieldCheck, Settings } from 'lucide-react';
+import { X, Volume2, VolumeX, Moon, Sun, ShieldCheck, Settings, Download } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -11,6 +11,7 @@ interface SettingsModalProps {
   onChangeVolume: (vol: number) => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
+  onOpenInstall: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -22,6 +23,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onChangeVolume,
   darkMode,
   onToggleDarkMode,
+  onOpenInstall,
 }) => {
   if (!isOpen) return null;
 
@@ -47,7 +49,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           Game Settings
         </h3>
         <p className="text-xs md:text-sm font-bold text-slate-500 dark:text-slate-400 mb-6">
-          Adjust volume, audio, and screen appearance
+          Adjust volume, audio, screen mode, and installation
         </p>
 
         {/* Volume Slider Control */}
@@ -73,7 +75,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Sound FX & Music Toggle */}
-        <div className="w-full mb-4">
+        <div className="w-full mb-3">
           <button
             onClick={() => {
               soundManager.playTap();
@@ -91,7 +93,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Day / Night Mode Toggle */}
-        <div className="w-full mb-6">
+        <div className="w-full mb-3">
           <button
             onClick={() => {
               soundManager.playTap();
@@ -101,6 +103,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           >
             {darkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-500" />}
             <span>{darkMode ? 'Switch to Day Mode' : 'Switch to Night Mode'}</span>
+          </button>
+        </div>
+
+        {/* Install on Phone Button */}
+        <div className="w-full mb-6">
+          <button
+            onClick={() => {
+              soundManager.playTap();
+              onClose();
+              onOpenInstall();
+            }}
+            className="w-full py-3 px-4 rounded-2xl font-black text-base bg-emerald-50 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 border-2 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100 transition-all flex items-center justify-center gap-2"
+          >
+            <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <span>Install App on Phone</span>
           </button>
         </div>
 
