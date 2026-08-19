@@ -692,6 +692,53 @@ export const BookVector: React.FC<{ size?: number; className?: string }> = ({
   );
 };
 
+export const RocketVector: React.FC<{ size?: number; className?: string }> = ({
+  size = 64,
+  className = '',
+}) => {
+  const id = React.useId().replace(/:/g, '');
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`drop-shadow-md select-none ${className}`}
+    >
+      <defs>
+        <linearGradient id={`rocketGrad-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#2563eb" />
+        </linearGradient>
+        <linearGradient id={`fireGrad-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#fef08a" />
+          <stop offset="40%" stopColor="#f97316" />
+          <stop offset="100%" stopColor="#dc2626" />
+        </linearGradient>
+      </defs>
+      {/* Rocket Fins */}
+      <path d="M30 65 L18 80 L35 78 Z" fill="#ef4444" stroke="#991b1b" strokeWidth="2" />
+      <path d="M70 65 L82 80 L65 78 Z" fill="#ef4444" stroke="#991b1b" strokeWidth="2" />
+      {/* Thruster Flame */}
+      <path d="M42 78 Q50 98 58 78 Q50 90 42 78 Z" fill={`url(#fireGrad-${id})`} />
+      {/* Body */}
+      <path
+        d="M50 14 C35 34 35 65 36 78 L64 78 C65 65 65 34 50 14 Z"
+        fill={`url(#rocketGrad-${id})`}
+        stroke="#1d4ed8"
+        strokeWidth="2.5"
+      />
+      {/* Nose cone tip */}
+      <path d="M50 14 C42 26 40 34 39 38 L61 38 C60 34 58 26 50 14 Z" fill="#ef4444" />
+      {/* Porthole Window */}
+      <circle cx="50" cy="50" r="10" fill="#f8fafc" stroke="#64748b" strokeWidth="3" />
+      <circle cx="50" cy="50" r="7" fill="#38bdf8" />
+      <ellipse cx="48" cy="48" rx="3" ry="1.5" fill="#ffffff" opacity="0.8" />
+    </svg>
+  );
+};
+
 export const QuizCardsVector: React.FC<{ size?: number; className?: string }> = ({
   size = 64,
   className = '',
@@ -767,9 +814,45 @@ export const FlameVector: React.FC<{ size?: number; className?: string }> = ({
   );
 };
 
-export const CloudVector: React.FC<{ size?: number; className?: string }> = ({
+export const CardsMatchVector: React.FC<{ size?: number; className?: string }> = ({
+  size = 48,
+  className = '',
+}) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`drop-shadow-md select-none ${className}`}
+    >
+      {/* Left Card */}
+      <rect x="8" y="20" width="38" height="56" rx="8" fill="#ec4899" stroke="#be185d" strokeWidth="2.5" />
+      <circle cx="27" cy="48" r="10" fill="#fdf2f8" />
+      <text x="27" y="53" fill="#be185d" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">?</text>
+      
+      {/* Right Card (Matched) */}
+      <rect x="54" y="20" width="38" height="56" rx="8" fill="#3b82f6" stroke="#1d4ed8" strokeWidth="2.5" />
+      <circle cx="73" cy="48" r="10" fill="#eff6ff" />
+      <path d="M68 48 L72 52 L78 44" stroke="#1d4ed8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      
+      {/* Sparkles */}
+      <polygon points="50,12 52,18 58,20 52,22 50,28 48,22 42,20 48,18" fill="#f59e0b" />
+    </svg>
+  );
+};
+
+export const CloudVector: React.FC<{
+  size?: number;
+  className?: string;
+  fill?: string;
+  fillOpacity?: number;
+}> = ({
   size = 64,
   className = '',
+  fill = '#ffffff',
+  fillOpacity = 0.85,
 }) => {
   return (
     <svg
@@ -782,8 +865,8 @@ export const CloudVector: React.FC<{ size?: number; className?: string }> = ({
     >
       <path
         d="M20 48 L80 48 C90 48 95 40 92 32 C90 24 82 22 76 25 C72 12 55 10 46 20 C42 16 32 18 30 26 C22 26 12 34 20 48 Z"
-        fill="#ffffff"
-        fillOpacity="0.85"
+        fill={fill}
+        fillOpacity={fillOpacity}
       />
     </svg>
   );

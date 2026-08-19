@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { GameMode, Question } from '../types';
 import { soundManager } from '../utils/audio';
 import { MathVisualizer } from './MathVisualizer';
+import { generateQuestions } from '../utils/math';
 import {
   Volume2,
   VolumeX,
   Pause,
   Play,
   ArrowLeft,
-  Home,
   Check,
   X,
   HelpCircle,
+  Sparkles,
 } from 'lucide-react';
 import {
   FishVector,
@@ -20,13 +21,13 @@ import {
   BalloonVector,
   BalloonBurstVector,
   AppleVector,
-  BasketVector,
   FishermanBoatVector,
+  RocketVector,
   SunVector,
   CloudVector,
-  TreeVector,
   FlameVector,
   StarVector,
+  CardsMatchVector,
 } from './illustrations/VectorGraphics';
 import confetti from 'canvas-confetti';
 
@@ -67,33 +68,11 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   const [netTarget, setNetTarget] = useState<number | null>(null);
   const [balloonPopped, setBalloonPopped] = useState<number | null>(null);
   const [harvestedApple, setHarvestedApple] = useState<number | null>(null);
+  const [rocketBlast, setRocketBlast] = useState<boolean>(false);
 
-  // Generate 10 randomized questions for the chosen times table
+  // Generate 10 randomized multiplication questions for the chosen times table
   useEffect(() => {
-    const multipliers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].sort(() => Math.random() - 0.5);
-    const newQuestions: Question[] = multipliers.map((mult) => {
-      const answer = table * mult;
-      // Generate 3 unique distractors close to answer
-      const wrongOptions = new Set<number>();
-      while (wrongOptions.size < 3) {
-        const delta = (Math.floor(Math.random() * 4) + 1) * (Math.random() > 0.5 ? 1 : -1) * table;
-        const candidate = answer + delta;
-        if (candidate > 0 && candidate !== answer && candidate <= table * 12) {
-          wrongOptions.add(candidate);
-        } else {
-          const fallback = Math.floor(Math.random() * 10 + 1) * table;
-          if (fallback !== answer) wrongOptions.add(fallback);
-        }
-      }
-      const options = [answer, ...Array.from(wrongOptions)].sort(() => Math.random() - 0.5);
-      return {
-        table,
-        multiplier: mult,
-        answer,
-        options,
-      };
-    });
-
+    const newQuestions = generateQuestions('multiply', table, TOTAL_QUESTIONS);
     setQuestions(newQuestions);
     setQuestionIndex(0);
     setScore(0);
@@ -102,7 +81,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     setIsLocked(false);
     setShowFeedback(false);
 
-    soundManager.startMusic(mode);
+    soundManager.startMusic(mode === 'rocket' ? 'quiz' : mode);
 
     return () => {
       soundManager.stopMusic();
@@ -137,79 +116,74 @@ export const GameScreen: React.FC<GameScreenProps> = ({
       } else if (mode === 'harvest') {
         setHarvestedApple(option);
         soundManager.playHarvest();
+      } else if (mode === 'rocket') {
+        setRocketBlast(true);
+        soundManager.playLevelUp();
       }
 
-      try {
+      if (streak + 1 >= 3 && (streak + 1) % 3 === 0) {
         confetti({
-          particleCount: 30,
-          spread: 65,
+          particleCount: 35,
+          spread: 60,
           origin: { y: 0.6 },
-          colors: ['#10b981', '#f59e0b', '#3b82f6', '#ec4899'],
         });
-      } catch {}
+      }
 
       setTimeout(() => {
-        setShowFeedback(true);
-      }, mode === 'quiz' ? 550 : 900);
+        advanceNextQuestion(true);
+      }, 1000);
     } else {
       setStreak(0);
       soundManager.playWrong();
       setTimeout(() => {
         setShowFeedback(true);
-      }, 650);
+      }, 600);
+    }
+  };
+
+  const advanceNextQuestion = (wasCorrect: boolean) => {
+    setFishingTarget(null);
+    setNetTarget(null);
+    setBalloonPopped(null);
+    setHarvestedApple(null);
+    setRocketBlast(false);
+    setSelectedOption(null);
+    setIsLocked(false);
+    setShowFeedback(false);
+    setShowHelperHint(false);
+
+    if (questionIndex + 1 < questions.length) {
+      setQuestionIndex((prev) => prev + 1);
+    } else {
+      const finalScore = wasCorrect ? score + 1 : score;
+      onFinishGame(finalScore, TOTAL_QUESTIONS);
     }
   };
 
   const handleContinue = () => {
     soundManager.playTap();
-    setShowFeedback(false);
-    setSelectedOption(null);
-    setFishingTarget(null);
-    setNetTarget(null);
-    setBalloonPopped(null);
-    setHarvestedApple(null);
-    setShowHelperHint(false);
-
-    if (questionIndex + 1 >= TOTAL_QUESTIONS) {
-      soundManager.playVictory();
-      onFinishGame(score, TOTAL_QUESTIONS);
-    } else {
-      setQuestionIndex((prev) => prev + 1);
-      setIsLocked(false);
-    }
+    advanceNextQuestion(false);
   };
 
   if (!currentQ) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-sky-50 dark:bg-slate-900">
-        <div className="text-xl font-black text-slate-900 dark:text-slate-100">Setting up game...</div>
+      <div className="min-h-screen min-h-[100dvh] w-full flex items-center justify-center bg-sky-100 dark:bg-slate-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-amber-500 border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen h-[100dvh] max-h-screen w-full flex flex-col p-2 sm:p-3 md:p-5 bg-gradient-to-b from-sky-100 via-sky-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 select-none overflow-hidden">
-      {/* Top Game Navigation Bar */}
-      <header className="w-full max-w-5xl mx-auto flex items-center justify-between gap-1.5 pb-2">
+    <div className="min-h-screen min-h-[100dvh] w-full flex flex-col p-2 sm:p-3 overflow-y-auto overflow-x-hidden bg-gradient-to-b from-sky-100 via-sky-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      {/* Top Header Bar */}
+      <header className="w-full max-w-5xl mx-auto flex items-center justify-between pb-1 border-b border-slate-300 dark:border-slate-800 shrink-0">
         <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => {
-              soundManager.playTap();
-              onGoHome();
-            }}
-            className="p-2 md:p-2.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-md border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-1 font-black text-xs"
-            title="Return to Game Menu"
-          >
-            <Home className="w-4 h-4" />
-            <span className="hidden sm:inline">Menu</span>
-          </button>
-
           <button
             onClick={() => {
               soundManager.playTap();
               setIsPaused(true);
             }}
-            className="p-2 md:p-2.5 bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-400 rounded-2xl shadow-md border-2 border-amber-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all"
+            className="p-1.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-xl shadow-xs border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all cursor-pointer"
             title="Pause Game"
           >
             <Pause className="w-4 h-4" />
@@ -220,40 +194,36 @@ export const GameScreen: React.FC<GameScreenProps> = ({
               soundManager.playTap();
               onToggleMute();
             }}
-            className={`p-2 md:p-2.5 rounded-2xl shadow-md border-2 transition-all hover:scale-105 active:scale-95 ${
+            className={`p-1.5 rounded-xl shadow-xs border-2 transition-all hover:scale-105 active:scale-95 cursor-pointer ${
               soundMuted
                 ? 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600'
                 : 'bg-emerald-500 text-white border-emerald-600'
             }`}
-            title={soundMuted ? 'Unmute' : 'Mute'}
+            title={soundMuted ? 'Unmute Sound' : 'Mute Sound'}
           >
             {soundMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
         </div>
 
-        {/* Progress & Streak Center Indicator */}
-        <div className="flex-1 max-w-xs md:max-w-md mx-2 flex flex-col items-center">
-          <div className="flex items-center justify-between w-full text-xs font-black text-slate-800 dark:text-slate-200 px-1 mb-1">
-            <span className="flex items-center gap-1">
-              <span className="text-amber-700 dark:text-amber-400 font-black">{table}× Table</span>
-            </span>
-            <span className="bg-amber-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full border border-amber-300 dark:border-slate-600 text-amber-950 dark:text-amber-300 font-black">
-              Q {questionIndex + 1} / {TOTAL_QUESTIONS}
-            </span>
+        {/* Progress Tracker */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-1 text-[11px] font-black text-slate-900 dark:text-slate-100">
+            <span>Question {questionIndex + 1}</span>
+            <span className="text-slate-400">/</span>
+            <span>{TOTAL_QUESTIONS}</span>
           </div>
-
-          <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden border-2 border-slate-300 dark:border-slate-600 p-0.5">
+          <div className="w-28 sm:w-36 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-300 dark:border-slate-700 mt-0.5">
             <div
-              className="h-full bg-gradient-to-r from-emerald-400 to-green-500 rounded-full transition-all duration-300"
-              style={{ width: `${((questionIndex) / TOTAL_QUESTIONS) * 100}%` }}
+              className="h-full bg-gradient-to-r from-emerald-400 to-green-500 transition-all duration-300"
+              style={{ width: `${((questionIndex + 1) / TOTAL_QUESTIONS) * 100}%` }}
             ></div>
           </div>
         </div>
 
         <div className="flex items-center gap-1.5">
           {streak > 1 && (
-            <div className="hidden sm:flex items-center gap-1 bg-amber-400 text-amber-950 font-black text-xs px-2.5 py-1 rounded-xl border-2 border-amber-500 shadow-sm animate-pulse">
-              <FlameVector size={14} />
+            <div className="hidden sm:flex items-center gap-1 bg-amber-400 text-amber-950 font-black text-xs px-2 py-0.5 rounded-xl border-2 border-amber-500 shadow-xs animate-pulse">
+              <FlameVector size={13} />
               <span>{streak} Streak!</span>
             </div>
           )}
@@ -263,24 +233,24 @@ export const GameScreen: React.FC<GameScreenProps> = ({
               soundManager.playTap();
               onBackToTables();
             }}
-            className="p-2 md:p-2.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-2xl shadow-md border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-1 font-black text-xs"
-            title="Back to Times Table Selection"
+            className="p-1.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-xl shadow-xs border-2 border-slate-300 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all flex items-center gap-1 font-black text-xs cursor-pointer"
+            title="Back to Number Selection"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden md:inline">Tables</span>
+            <span className="hidden sm:inline">Back</span>
           </button>
         </div>
       </header>
 
       {/* Prominent Equation Card */}
-      <div className="w-full max-w-2xl mx-auto my-1 flex flex-col items-center">
-        <div className="relative flex items-center justify-center gap-2 md:gap-4 px-4 md:px-8 py-2 md:py-3 bg-emerald-100 dark:bg-slate-800 rounded-2xl md:rounded-3xl border-3 md:border-4 border-emerald-500 dark:border-emerald-600 shadow-md font-black text-2xl md:text-4xl text-slate-900 dark:text-slate-100 font-['Fredoka',sans-serif]">
-          <span className="text-emerald-800 dark:text-emerald-400">{currentQ.table}</span>
+      <div className="w-full max-w-xl mx-auto my-1 flex flex-col items-center shrink-0">
+        <div className="relative flex items-center justify-center gap-2 sm:gap-3 px-4 py-1.5 bg-emerald-100 dark:bg-slate-800 rounded-2xl border-2 sm:border-3 border-emerald-500 dark:border-emerald-600 shadow-xs font-black text-xl sm:text-3xl text-slate-900 dark:text-slate-100 font-['Fredoka',sans-serif]">
+          <span className="text-emerald-800 dark:text-emerald-400">{currentQ.num1}</span>
           <span className="text-amber-600 dark:text-amber-400">×</span>
-          <span className="text-indigo-700 dark:text-indigo-400">{currentQ.multiplier}</span>
+          <span className="text-indigo-700 dark:text-indigo-400">{currentQ.num2}</span>
           <span className="text-slate-500 dark:text-slate-400">=</span>
           <span
-            className={`min-w-[55px] md:min-w-[75px] text-center px-2 py-0.5 rounded-xl border-2 shadow-inner ${
+            className={`min-w-[50px] sm:min-w-[65px] text-center px-2 py-0.5 rounded-xl border-2 shadow-inner ${
               selectedOption !== null
                 ? isLastAnswerCorrect
                   ? 'bg-emerald-500 text-white border-emerald-600 animate-bounce'
@@ -298,39 +268,49 @@ export const GameScreen: React.FC<GameScreenProps> = ({
             soundManager.playTap();
             setShowHelperHint(!showHelperHint);
           }}
-          className="mt-1 text-xs font-black text-indigo-700 dark:text-indigo-300 flex items-center gap-1 bg-indigo-50 dark:bg-slate-800 px-3 py-0.5 rounded-full border border-indigo-300 dark:border-slate-700 hover:bg-indigo-100 transition-colors"
+          className="mt-1 text-[10px] sm:text-xs font-black text-indigo-700 dark:text-indigo-300 flex items-center gap-1 bg-indigo-50 dark:bg-slate-800 px-3 py-0.5 rounded-full border border-indigo-300 dark:border-slate-700 hover:bg-indigo-100 transition-colors cursor-pointer"
         >
           <HelpCircle className="w-3.5 h-3.5" />
-          <span>{showHelperHint ? 'Hide Hint' : 'Show Visual Hint'}</span>
+          <span>{showHelperHint ? 'Hide Visual Model' : 'Show Visual Model'}</span>
         </button>
 
         {showHelperHint && (
-          <div className="w-full max-w-xl mt-2 animate-fadeIn">
-            <MathVisualizer table={currentQ.table} multiplier={currentQ.multiplier} />
+          <div className="w-full max-w-lg mt-1 animate-fadeIn">
+            <MathVisualizer
+              table={currentQ.table}
+              multiplier={currentQ.multiplier}
+              answer={currentQ.answer}
+            />
           </div>
         )}
       </div>
 
-      {/* Main Interactive Game Stage */}
-      <main className="flex-1 w-full max-w-5xl mx-auto relative my-1 min-h-0 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border-2 sm:border-4 border-slate-300 dark:border-slate-700 flex flex-col justify-between">
+      {/* Main Interactive Game Stage with Realistic Animations */}
+      <main className="flex-1 w-full max-w-5xl mx-auto relative my-1 min-h-[220px] rounded-2xl overflow-hidden shadow-md border-2 border-slate-300 dark:border-slate-700 flex flex-col justify-between shrink-0">
         {/* GAME STAGE 1: CATCH A FISH */}
         {mode === 'fish' && (
-          <div className="relative w-full h-full min-h-0 bg-gradient-to-b from-sky-300 via-sky-400 to-teal-700 overflow-hidden flex flex-col justify-between">
-            {/* Sky & Sun vector */}
-            <div className="absolute top-2 right-3 pointer-events-none">
-              <SunVector size={42} className="animate-pulse" />
+          <div className="relative w-full h-full min-h-[220px] bg-gradient-to-b from-sky-300 via-sky-400 to-teal-700 overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-1 right-2 pointer-events-none">
+              <SunVector size={36} className="animate-pulse" />
             </div>
-            <div className="absolute top-3 left-6 pointer-events-none opacity-80">
-              <CloudVector size={48} />
-            </div>
-
-            {/* Fisherman Boat Vector with line */}
-            <div className="absolute top-1 left-2 sm:left-6 z-20">
-              <FishermanBoatVector size={85} />
+            <div className="absolute top-2 left-4 pointer-events-none opacity-80">
+              <CloudVector size={42} />
             </div>
 
-            {/* Swimming Fish Answers */}
-            <div className="relative z-10 grid grid-cols-4 gap-2 sm:gap-4 mt-auto mb-2 sm:mb-4 px-2 sm:px-4 w-full max-w-3xl mx-auto">
+            {/* Boat & Fisherman with fishing line */}
+            <div className="absolute top-1 left-2 sm:left-4 z-20">
+              <FishermanBoatVector size={72} />
+            </div>
+
+            {/* Floating Water Waves and Ripples */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-1/2 left-10 w-8 h-8 rounded-full border-2 border-white/30 animate-ripple"></div>
+              <div className="absolute top-1/3 right-16 w-12 h-12 rounded-full border-2 border-white/20 animate-ripple delay-500"></div>
+              <div className="absolute bottom-6 left-1/3 w-6 h-6 rounded-full border-2 border-white/30 animate-ripple delay-300"></div>
+            </div>
+
+            {/* Interactive Fish School */}
+            <div className="relative z-10 grid grid-cols-4 gap-2 mt-auto mb-2 px-2 sm:px-4 w-full max-w-2xl mx-auto">
               {currentQ.options.map((opt, idx) => {
                 const isAnswer = opt === currentQ.answer;
                 const isChosen = selectedOption === opt;
@@ -341,26 +321,30 @@ export const GameScreen: React.FC<GameScreenProps> = ({
                     key={idx}
                     onClick={() => handleSelectAnswer(opt)}
                     disabled={isLocked}
-                    className={`group relative flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-xl sm:rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer ${
-                      isCaught
-                        ? 'animate-bounce -translate-y-10 sm:-translate-y-16 scale-110'
-                        : 'animate-pulse'
+                    className={`group relative flex flex-col items-center justify-center p-1 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer ${
+                      isCaught ? 'animate-fishHook' : 'animate-swim'
                     } ${
                       isChosen
                         ? isAnswer
-                          ? 'ring-3 sm:ring-4 ring-emerald-300 bg-emerald-400/80 shadow-2xl'
-                          : 'ring-3 sm:ring-4 ring-rose-400 bg-rose-400/80'
-                        : 'bg-white/25 hover:bg-white/45 backdrop-blur-xs'
+                          ? 'ring-4 ring-emerald-400 bg-emerald-400/30'
+                          : 'ring-4 ring-rose-400 bg-rose-400/30'
+                        : 'hover:bg-white/20'
                     }`}
+                    style={{ animationDelay: `${idx * 0.45}s` }}
                   >
-                    <FishVector
-                      variant={idx}
-                      size={46}
-                      className="transform group-hover:rotate-6 transition-transform"
-                    />
-                    <div className="mt-0.5 bg-white text-slate-950 font-black text-base sm:text-xl px-2.5 py-0.5 rounded-lg sm:rounded-xl shadow-md border-2 border-cyan-300">
-                      {opt}
+                    <div className="relative">
+                      <FishVector size={54} variant={idx % 4} className="transform group-hover:scale-110 transition-transform" />
+                      <span className="absolute inset-0 flex items-center justify-center text-slate-950 font-black text-base sm:text-lg drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)] pr-1">
+                        {opt}
+                      </span>
                     </div>
+
+                    {isCaught && (
+                      <div className="absolute -top-8 flex items-center gap-1 text-yellow-300 font-black text-xs animate-bounce">
+                        <Sparkles className="w-4 h-4 fill-current" />
+                        <span>CAUGHT!</span>
+                      </div>
+                    )}
                   </button>
                 );
               })}
@@ -370,86 +354,60 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
         {/* GAME STAGE 2: BUTTERFLY CATCH */}
         {mode === 'butterfly' && (
-          <div className="relative w-full h-full min-h-0 bg-gradient-to-b from-sky-200 via-sky-100 to-emerald-200 overflow-hidden flex flex-col justify-between p-2 sm:p-3">
-            {/* Scenery trees */}
-            <div className="absolute -top-6 -left-4 pointer-events-none opacity-85">
-              <TreeVector size={70} />
-            </div>
-            <div className="absolute -top-6 -right-4 pointer-events-none opacity-85">
-              <TreeVector size={70} />
-            </div>
-            <div className="absolute top-2 right-1/3 pointer-events-none">
-              <SunVector size={38} className="animate-pulse" />
+          <div className="relative w-full h-full min-h-[220px] bg-gradient-to-b from-sky-200 via-emerald-100 to-emerald-300 overflow-hidden flex flex-col justify-between p-2">
+            <div className="absolute top-2 right-4 pointer-events-none opacity-85">
+              <CloudVector size={42} />
             </div>
 
-            {/* Flying Butterflies with Answer Badges */}
-            <div className="relative z-10 grid grid-cols-4 gap-2 sm:gap-4 my-auto w-full max-w-3xl mx-auto">
+            {/* Grass & Flowers Meadow Foreground */}
+            <div className="absolute -bottom-2 inset-x-0 h-8 bg-emerald-400/80 rounded-t-3xl pointer-events-none flex justify-around items-end px-4 pb-1">
+              <span className="text-sm animate-bounce">🌸</span>
+              <span className="text-xs">🌼</span>
+              <span className="text-sm animate-bounce delay-300">🌷</span>
+              <span className="text-xs">🌻</span>
+              <span className="text-sm animate-bounce delay-700">🌸</span>
+            </div>
+
+            <div className="relative z-10 grid grid-cols-4 gap-2 my-auto w-full max-w-2xl mx-auto">
               {currentQ.options.map((opt, idx) => {
-                const isAnswer = opt === currentQ.answer;
-                const isChosen = selectedOption === opt;
-                const isCaught = netTarget === opt;
+                const isNetCaught = netTarget === opt;
 
                 return (
                   <button
                     key={idx}
                     onClick={() => handleSelectAnswer(opt)}
                     disabled={isLocked}
-                    className={`group flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-xl sm:rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer ${
-                      isCaught ? 'scale-115 -translate-y-4 animate-bounce' : ''
-                    } ${
-                      isChosen
-                        ? isAnswer
-                          ? 'ring-3 sm:ring-4 ring-purple-300 bg-purple-200/90 shadow-2xl'
-                          : 'ring-3 sm:ring-4 ring-rose-400 bg-rose-200/90'
-                        : 'hover:bg-white/60'
+                    className={`group relative flex flex-col items-center justify-center p-1 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer ${
+                      isNetCaught ? 'animate-bounce scale-110' : 'animate-butterflyDrift'
                     }`}
+                    style={{ animationDelay: `${idx * 0.6}s` }}
                   >
-                    <ButterflyVector
-                      variant={idx}
-                      size={44}
-                      className="animate-bounce duration-700"
-                    />
-                    <div className="mt-0.5 bg-white dark:bg-slate-800 text-purple-950 dark:text-purple-200 font-black text-base sm:text-xl px-2.5 py-0.5 rounded-lg sm:rounded-xl shadow-md border-2 border-purple-300 dark:border-purple-600">
-                      {opt}
+                    <div className="relative flex flex-col items-center">
+                      <div className="animate-wingFlap" style={{ animationDelay: `${idx * 0.2}s` }}>
+                        <ButterflyVector size={54} variant={idx % 4} className="transform group-hover:rotate-6 transition-transform" />
+                      </div>
+                      <div className="mt-0.5 px-2.5 py-0.5 bg-white/95 dark:bg-slate-900/95 text-slate-950 dark:text-white rounded-full font-black text-xs sm:text-sm border-2 border-purple-400 shadow-xs">
+                        {opt}
+                      </div>
                     </div>
+
+                    {isNetCaught && (
+                      <div className="absolute inset-0 flex items-center justify-center animate-ping pointer-events-none">
+                        <ButterflyCatcherVector size={65} />
+                      </div>
+                    )}
                   </button>
                 );
               })}
-            </div>
-
-            {/* Bottom Meadow Grass and Butterfly Catcher Vector */}
-            <div className="relative z-20 w-full flex items-center justify-between border-t-2 border-emerald-400 bg-emerald-500/90 px-3 py-1 rounded-lg sm:rounded-xl shadow-md shrink-0">
-              <div className="flex items-center gap-1.5">
-                <ButterflyCatcherVector size={36} />
-                <span className="text-white font-black text-xs hidden sm:inline">
-                  Catch the right butterfly!
-                </span>
-              </div>
-              <div className="flex items-center gap-1 text-white font-black text-xs bg-emerald-600/80 px-2.5 py-0.5 rounded-full border border-emerald-400">
-                <StarVector size={12} fill="#fef08a" />
-                <span>Garden</span>
-              </div>
             </div>
           </div>
         )}
 
         {/* GAME STAGE 3: POP THE BALLOON */}
         {mode === 'balloon' && (
-          <div className="relative w-full h-full min-h-0 bg-gradient-to-b from-purple-300 via-pink-200 to-amber-100 overflow-hidden flex flex-col justify-between p-2 sm:p-3">
-            {/* Carnival Banner */}
-            <div className="w-full text-center shrink-0">
-              <span className="inline-flex items-center gap-1.5 bg-amber-400 text-amber-950 font-black text-[11px] sm:text-xs px-3 py-0.5 rounded-full border border-amber-500 shadow-xs">
-                <StarVector size={12} fill="#78350f" />
-                <span>Pop the Correct Balloon!</span>
-                <StarVector size={12} fill="#78350f" />
-              </span>
-            </div>
-
-            {/* Bobbing Balloons */}
-            <div className="grid grid-cols-4 gap-2 sm:gap-4 my-auto w-full max-w-3xl mx-auto z-10">
+          <div className="relative w-full h-full min-h-[220px] bg-gradient-to-b from-sky-300 via-indigo-100 to-pink-200 overflow-hidden flex flex-col justify-between p-2">
+            <div className="relative z-10 grid grid-cols-4 gap-2 my-auto w-full max-w-2xl mx-auto">
               {currentQ.options.map((opt, idx) => {
-                const isAnswer = opt === currentQ.answer;
-                const isChosen = selectedOption === opt;
                 const isPopped = balloonPopped === opt;
 
                 return (
@@ -457,93 +415,126 @@ export const GameScreen: React.FC<GameScreenProps> = ({
                     key={idx}
                     onClick={() => handleSelectAnswer(opt)}
                     disabled={isLocked}
-                    className={`group relative flex flex-col items-center justify-center p-1 sm:p-2 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer ${
-                      isPopped
-                        ? 'scale-115'
-                        : 'animate-bounce duration-1000'
-                    }`}
+                    className="group relative flex flex-col items-center justify-center p-1 cursor-pointer transition-all transform hover:scale-110 active:scale-95"
                   >
                     {isPopped ? (
-                      <BalloonBurstVector size={48} className="animate-scaleUp" />
+                      <div className="animate-ping">
+                        <BalloonBurstVector size={54} />
+                      </div>
                     ) : (
-                      <div className="relative flex flex-col items-center">
-                        <BalloonVector variant={idx} size={44} />
-                        <div className="absolute top-3.5 inset-x-0 text-center font-black text-base sm:text-xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                      <div
+                        className="relative flex flex-col items-center animate-balloonBob"
+                        style={{ animationDelay: `${idx * 0.5}s` }}
+                      >
+                        <BalloonVector size={52} variant={idx % 4} className="transform group-hover:rotate-3 transition-transform" />
+                        <span className="absolute inset-0 flex items-center justify-center text-white font-black text-sm sm:text-base drop-shadow-[0_2px_3px_rgba(0,0,0,0.85)] -mt-2">
                           {opt}
-                        </div>
+                        </span>
                       </div>
                     )}
                   </button>
                 );
               })}
             </div>
-
-            {/* Bottom Dart Stand */}
-            <div className="flex items-center justify-center py-0.5 shrink-0">
-              <div className="bg-white/90 dark:bg-slate-800/90 px-3 py-0.5 rounded-full border border-slate-300 dark:border-slate-600 font-black text-[10px] sm:text-xs text-slate-800 dark:text-slate-200 flex items-center gap-1 shadow-xs">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
-                <span>Aim & Pop</span>
-              </div>
-            </div>
           </div>
         )}
 
-        {/* GAME STAGE 4: MULTIPLY TO HARVEST */}
+        {/* GAME STAGE 4: FRUIT HARVEST */}
         {mode === 'harvest' && (
-          <div className="relative w-full h-full min-h-0 bg-gradient-to-b from-sky-200 via-emerald-100 to-emerald-300 overflow-hidden flex flex-col justify-between p-2 sm:p-3">
-            {/* Big Apple Tree with Hanging Apples */}
-            <div className="relative flex-1 flex flex-col items-center justify-center">
-              {/* Tree Canopy */}
-              <div className="relative w-full max-w-xl h-36 sm:h-44 bg-emerald-600 dark:bg-emerald-800 rounded-[35px] sm:rounded-[45px] border-4 border-emerald-700 dark:border-emerald-900 shadow-lg flex items-center justify-center p-2">
-                <div className="grid grid-cols-4 gap-2 sm:gap-3 w-full">
-                  {currentQ.options.map((opt, idx) => {
-                    const isHarvested = harvestedApple === opt;
-
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => handleSelectAnswer(opt)}
-                        disabled={isLocked}
-                        className={`group relative flex flex-col items-center justify-center p-1 rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 cursor-pointer ${
-                          isHarvested ? 'translate-y-24 scale-75 opacity-0' : ''
-                        }`}
-                      >
-                        <div className="relative">
-                          <AppleVector size={42} className="transform group-hover:rotate-6 transition-transform" />
-                          <span className="absolute inset-0 flex items-center justify-center text-white font-black text-sm sm:text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] pt-1">
-                            {opt}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              {/* Tree Trunk */}
-              <div className="w-10 h-7 bg-amber-900 border-2 border-amber-950 -mt-1 rounded-b-md"></div>
+          <div className="relative w-full h-full min-h-[220px] bg-gradient-to-b from-sky-200 via-amber-50 to-emerald-200 overflow-hidden flex flex-col justify-between p-2">
+            {/* Tree Branch Header */}
+            <div className="w-full text-center text-xs font-black text-amber-900 bg-amber-200/70 py-0.5 rounded-full mb-1">
+              🍎 Shake & Harvest the Correct Apple!
             </div>
 
-            {/* Bottom Picnic Basket */}
-            <div className="flex items-center justify-center pb-0.5 shrink-0">
-              <div className="flex items-center gap-2 bg-amber-100 dark:bg-slate-800 px-3 py-1 rounded-xl border-2 border-amber-400 dark:border-amber-600 shadow-xs">
-                <BasketVector size={32} />
-                <div>
-                  <div className="text-[11px] font-black text-amber-950 dark:text-amber-200">
-                    Harvest Basket
-                  </div>
-                  <div className="text-[10px] font-bold text-amber-800 dark:text-amber-400">
-                    Tap the right apple!
-                  </div>
-                </div>
+            <div className="relative z-10 grid grid-cols-4 gap-2 my-auto w-full max-w-2xl mx-auto">
+              {currentQ.options.map((opt, idx) => {
+                const isHarvested = harvestedApple === opt;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelectAnswer(opt)}
+                    disabled={isLocked}
+                    className={`group relative flex flex-col items-center justify-center p-1 cursor-pointer transition-all transform hover:scale-110 active:scale-95 ${
+                      isHarvested ? 'animate-appleFall' : 'animate-appleSway'
+                    }`}
+                    style={{ animationDelay: `${idx * 0.4}s` }}
+                  >
+                    <div className="relative">
+                      <AppleVector size={48} className="transform group-hover:rotate-6 transition-transform" />
+                      <span className="absolute inset-0 flex items-center justify-center text-white font-black text-sm sm:text-base drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] pt-1">
+                        {opt}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Picnic Basket at bottom */}
+            <div className="w-full flex justify-center pb-1">
+              <div className="px-4 py-1 bg-amber-700 text-amber-100 rounded-full font-black text-xs border-2 border-amber-800 shadow-sm flex items-center gap-1.5">
+                <span>🧺 Orchard Basket</span>
               </div>
             </div>
           </div>
         )}
 
-        {/* GAME STAGE 5: MULTIPLICATION QUIZ */}
+        {/* GAME STAGE 5: ROCKET BLAST */}
+        {mode === 'rocket' && (
+          <div className="relative w-full h-full min-h-[220px] bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-900 overflow-hidden flex flex-col justify-between p-2">
+            {/* Stars background */}
+            <div className="absolute inset-0 pointer-events-none opacity-50">
+              <div className="absolute top-3 left-10 w-1.5 h-1.5 bg-white rounded-full animate-ping"></div>
+              <div className="absolute top-8 right-20 w-2 h-2 bg-yellow-200 rounded-full animate-pulse"></div>
+              <div className="absolute bottom-10 left-1/4 w-1 h-1 bg-cyan-300 rounded-full"></div>
+              <div className="absolute top-1/3 right-1/3 w-2 h-2 bg-pink-300 rounded-full animate-pulse"></div>
+            </div>
+
+            {/* Rocket Center Visual */}
+            <div
+              className={`relative flex items-center justify-center my-1 transition-all ${
+                rocketBlast ? 'animate-rocketBlastoff' : 'animate-rocketHover'
+              }`}
+            >
+              <RocketVector size={64} />
+            </div>
+
+            {/* Planet Answer Options */}
+            <div className="relative z-10 grid grid-cols-4 gap-2 mb-2 px-2 w-full max-w-2xl mx-auto">
+              {currentQ.options.map((opt, idx) => {
+                const isAnswer = opt === currentQ.answer;
+                const isChosen = selectedOption === opt;
+                const planetColors = [
+                  'from-purple-500 to-indigo-600 border-purple-400',
+                  'from-cyan-500 to-blue-600 border-cyan-400',
+                  'from-emerald-500 to-teal-600 border-emerald-400',
+                  'from-amber-500 to-orange-600 border-amber-400',
+                ];
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelectAnswer(opt)}
+                    disabled={isLocked}
+                    className={`group relative flex flex-col items-center justify-center p-2 rounded-2xl bg-gradient-to-b ${planetColors[idx % 4]} border-2 shadow-md transition-all transform hover:scale-105 active:scale-95 cursor-pointer ${
+                      isChosen ? (isAnswer ? 'ring-4 ring-emerald-300 scale-110' : 'ring-4 ring-rose-400') : ''
+                    }`}
+                  >
+                    <div className="text-white font-black text-base sm:text-xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                      {opt}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* GAME STAGE 6: SPEED QUIZ */}
         {mode === 'quiz' && (
-          <div className="relative w-full h-full min-h-0 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 dark:from-slate-950 dark:via-purple-950 dark:to-slate-950 flex flex-col items-center justify-center p-2 sm:p-4">
-            <div className="grid grid-cols-2 gap-2 sm:gap-4 w-full max-w-2xl">
+          <div className="relative w-full h-full min-h-[220px] bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 dark:from-slate-950 dark:via-purple-950 dark:to-slate-950 flex flex-col items-center justify-center p-2 sm:p-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full max-w-xl">
               {currentQ.options.map((opt, idx) => {
                 const isAnswer = opt === currentQ.answer;
                 const isChosen = selectedOption === opt;
@@ -553,27 +544,74 @@ export const GameScreen: React.FC<GameScreenProps> = ({
                     key={idx}
                     onClick={() => handleSelectAnswer(opt)}
                     disabled={isLocked}
-                    className={`group relative flex items-center justify-between p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 sm:border-3 shadow-sm transition-all duration-200 transform hover:scale-102 active:scale-95 cursor-pointer ${
+                    className={`group relative flex items-center justify-between p-2 sm:p-3 rounded-xl border-2 shadow-xs transition-all transform hover:scale-[1.02] active:scale-95 cursor-pointer ${
                       isChosen
                         ? isAnswer
-                          ? 'bg-emerald-500 text-white border-emerald-600 scale-102'
-                          : 'bg-rose-500 text-white border-rose-600'
+                          ? 'bg-emerald-500 text-white border-emerald-600 ring-4 ring-emerald-400'
+                          : 'bg-rose-500 text-white border-rose-600 ring-4 ring-rose-400'
                         : 'bg-white dark:bg-slate-800 text-slate-950 dark:text-slate-100 border-purple-300 dark:border-purple-700 hover:border-purple-500'
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-300 font-black text-xs sm:text-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <div className="w-6 h-6 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-300 font-black text-xs flex items-center justify-center">
                         {['A', 'B', 'C', 'D'][idx]}
                       </div>
-                      <span className="font-black text-lg sm:text-2xl text-slate-950 dark:text-white">{opt}</span>
+                      <span className="font-black text-base sm:text-xl text-slate-950 dark:text-white">{opt}</span>
                     </div>
 
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-current flex items-center justify-center opacity-90">
+                    <div className="w-5 h-5 rounded-full border-2 border-current flex items-center justify-center opacity-90">
                       {isChosen ? (
-                        isAnswer ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <X className="w-3.5 h-3.5 stroke-[3]" />
+                        isAnswer ? <Check className="w-3 h-3 stroke-[3]" /> : <X className="w-3 h-3 stroke-[3]" />
                       ) : (
-                        <span className="text-[10px] font-black">➔</span>
+                        <span className="text-[9px] font-black">➔</span>
                       )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* GAME STAGE 7: MEMORY MATCH */}
+        {mode === 'match' && (
+          <div className="relative w-full h-full min-h-[220px] bg-gradient-to-br from-violet-100 via-indigo-50 to-pink-100 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-950 flex flex-col items-center justify-center p-2">
+            <div className="mb-2 text-center shrink-0">
+              <div className="flex items-center justify-center gap-1 text-xs font-black text-indigo-700 dark:text-indigo-300">
+                <CardsMatchVector size={24} />
+                <span>Find the card matching the multiplication fact!</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-2 w-full max-w-xl">
+              {currentQ.options.map((opt, idx) => {
+                const isAnswer = opt === currentQ.answer;
+                const isChosen = selectedOption === opt;
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelectAnswer(opt)}
+                    disabled={isLocked}
+                    className={`group relative aspect-4/3 flex flex-col items-center justify-center p-2 rounded-2xl border-3 shadow-md transition-all transform hover:scale-105 active:scale-95 cursor-pointer ${
+                      isChosen
+                        ? isAnswer
+                          ? 'bg-emerald-500 text-white border-emerald-300 ring-4 ring-emerald-400 scale-105'
+                          : 'bg-rose-500 text-white border-rose-300 ring-4 ring-rose-400'
+                        : 'bg-gradient-to-b from-indigo-500 to-purple-600 text-white border-indigo-300 dark:border-indigo-400 hover:from-indigo-600 hover:to-purple-700'
+                    }`}
+                  >
+                    <div className="w-full flex items-center justify-between text-[10px] opacity-75 px-1 font-black">
+                      <span>CARD</span>
+                      <span>#{idx + 1}</span>
+                    </div>
+
+                    <div className="my-auto text-2xl font-black drop-shadow-md">
+                      {opt}
+                    </div>
+
+                    <div className="text-[9px] font-extrabold uppercase tracking-wider opacity-90">
+                      {isChosen && isAnswer ? 'MATCH! ⭐' : 'TAP TO MATCH'}
                     </div>
                   </button>
                 );
@@ -583,60 +621,51 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         )}
       </main>
 
-      {/* FEEDBACK POPUP DIALOG - High contrast, perfectly legible in Light and Dark mode */}
+      {/* FEEDBACK POPUP DIALOG */}
       {showFeedback && (
-        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-3 md:p-4 animate-fadeIn">
-          <div className="w-full max-w-lg max-h-[92vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-3xl border-4 border-amber-400 dark:border-amber-500 shadow-2xl p-4 md:p-6 flex flex-col items-center text-center animate-scaleUp">
-            {/* Header Icon Vector */}
-            <div
-              className={`w-16 h-16 rounded-full flex items-center justify-center mb-2 shadow-md ${
-                isLastAnswerCorrect
-                  ? 'bg-emerald-100 border-4 border-emerald-300 animate-bounce'
-                  : 'bg-amber-100 border-4 border-amber-300'
-              }`}
-            >
-              {isLastAnswerCorrect ? (
-                <StarVector size={36} fill="#10b981" />
-              ) : (
-                <HelpCircle className="w-8 h-8 text-amber-700" />
-              )}
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-3 animate-fadeIn">
+          <div className="w-full max-w-md max-h-[92vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-3xl border-4 border-amber-400 dark:border-amber-500 shadow-2xl p-4 flex flex-col items-center text-center animate-scaleUp">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex items-center justify-center mb-2">
+              <StarVector size={32} fill="#f59e0b" />
             </div>
 
-            {/* High-Contrast Bold Heading: deep black/slate-950 in light mode, bright golden amber in dark mode */}
-            <h3 className="text-2xl md:text-3xl font-black text-slate-950 dark:text-amber-300 font-['Fredoka',sans-serif] drop-shadow-xs">
-              {isLastAnswerCorrect ? 'That’s Correct! 🎉' : 'Let’s Work It Out Together!'}
+            <h3 className="text-xl font-black text-slate-950 dark:text-white font-['Fredoka',sans-serif]">
+              Let's Learn Together!
             </h3>
 
-            {/* Explanation & Math Visualizer */}
-            <div className="w-full my-3">
-              <MathVisualizer table={currentQ.table} multiplier={currentQ.multiplier} />
+            <p className="text-xs text-slate-700 dark:text-slate-300 my-1">
+              Look at this helper model to see why the answer is{' '}
+              <strong className="text-emerald-600 dark:text-emerald-400 text-sm font-black">
+                {currentQ.answer}
+              </strong>
+              :
+            </p>
+
+            <div className="w-full my-2">
+              <MathVisualizer
+                table={currentQ.table}
+                multiplier={currentQ.multiplier}
+                answer={currentQ.answer}
+              />
             </div>
 
-            {/* Continue Button */}
             <button
               onClick={handleContinue}
-              className="w-full py-3.5 px-6 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 active:scale-95 text-white font-black text-lg md:text-xl rounded-full shadow-[0_5px_0_#065f46] hover:shadow-[0_2px_0_#065f46] transition-all border-2 border-emerald-300 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+              className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-black text-sm sm:text-base rounded-xl shadow-md active:scale-95 transition-all cursor-pointer mt-1"
             >
-              <span>Continue</span>
-              <span>➔</span>
+              Got It! Next Question ➔
             </button>
           </div>
         </div>
       )}
 
-      {/* PAUSE OVERLAY MODAL */}
+      {/* PAUSE MODAL */}
       {isPaused && (
-        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-3 md:p-4">
-          <div className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-3xl border-4 border-slate-300 dark:border-slate-700 p-5 md:p-7 text-center flex flex-col items-center shadow-2xl">
-            <div className="w-14 h-14 rounded-full bg-amber-100 dark:bg-slate-800 flex items-center justify-center mb-2 border-2 border-amber-300">
-              <Pause className="w-7 h-7 text-amber-700 dark:text-amber-400" />
-            </div>
-            <h3 className="text-2xl font-black text-slate-950 dark:text-white mb-1 font-['Fredoka',sans-serif]">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+          <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl p-5 border-4 border-amber-300 dark:border-slate-700 shadow-2xl flex flex-col items-center text-center animate-scaleUp">
+            <h3 className="text-2xl font-black text-slate-950 dark:text-white font-['Fredoka',sans-serif] mb-4">
               Game Paused
             </h3>
-            <p className="text-xs md:text-sm font-black text-slate-700 dark:text-slate-300 mb-5">
-              Take your time. Your progress is completely safe!
-            </p>
 
             <div className="flex flex-col gap-2.5 w-full">
               <button
@@ -644,10 +673,20 @@ export const GameScreen: React.FC<GameScreenProps> = ({
                   soundManager.playTap();
                   setIsPaused(false);
                 }}
-                className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-black text-base rounded-2xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-black rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all"
               >
                 <Play className="w-4 h-4 fill-current" />
-                <span>Keep Playing</span>
+                <span>Resume Play</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  soundManager.playTap();
+                  onBackToTables();
+                }}
+                className="w-full py-2.5 bg-indigo-500 hover:bg-indigo-400 text-white font-black rounded-xl shadow-md cursor-pointer active:scale-95 transition-all"
+              >
+                Change Times Table
               </button>
 
               <button
@@ -655,9 +694,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({
                   soundManager.playTap();
                   onGoHome();
                 }}
-                className="w-full py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-900 dark:text-slate-200 font-black text-xs md:text-sm rounded-2xl cursor-pointer"
+                className="w-full py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-200 font-black rounded-xl border border-slate-300 dark:border-slate-700 cursor-pointer active:scale-95 transition-all"
               >
-                Exit to Home
+                Exit to Main Menu
               </button>
             </div>
           </div>

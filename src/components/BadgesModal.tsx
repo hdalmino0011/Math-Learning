@@ -6,9 +6,11 @@ import {
   ButterflyVector,
   BalloonVector,
   AppleVector,
+  RocketVector,
   TrophyVector,
   BookVector,
   StarVector,
+  CardsMatchVector,
 } from './illustrations/VectorGraphics';
 
 interface StickerItem {
@@ -58,12 +60,24 @@ const ALL_STICKERS: StickerItem[] = [
   {
     id: 'quiz_champion',
     title: 'Quiz Champion',
-    description: 'Pass the speed Multiplication Quiz',
+    description: 'Pass the speed Math Quiz',
     renderGraphic: () => <TrophyVector size={36} />,
   },
   {
+    id: 'rocket_astronaut',
+    title: 'Cosmic Navigator',
+    description: 'Blast into space with Rocket Blast mode',
+    renderGraphic: () => <RocketVector size={36} />,
+  },
+  {
+    id: 'match_wizard',
+    title: 'Match Wizard',
+    description: 'Match equation pairs in Memory Match mode',
+    renderGraphic: () => <CardsMatchVector size={36} />,
+  },
+  {
     id: 'memorize_scholar',
-    title: 'Times Table Scholar',
+    title: 'Math Scholar',
     description: 'Complete full practice in Memorize Mode',
     renderGraphic: () => <BookVector size={36} />,
   },

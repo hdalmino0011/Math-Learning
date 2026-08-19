@@ -5,6 +5,7 @@ import {
   SunVector,
   MoonVector,
   CloudVector,
+  StarVector,
   FishVector,
   ButterflyVector,
   BalloonVector,
@@ -29,37 +30,99 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   };
 
   return (
-    <div className="relative h-screen h-[100dvh] max-h-screen w-full flex flex-col items-center justify-between p-2 sm:p-4 overflow-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-200 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-950 select-none">
+    <div className="relative min-h-screen min-h-[100dvh] w-full flex flex-col items-center justify-between p-2 sm:p-4 overflow-y-auto overflow-x-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-200 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-950 select-none">
       {/* Sky Background Decorative Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        {/* Sun / Moon Vector - Perfectly centered at the top without overlapping header buttons */}
-        <div className="absolute top-1 sm:top-2 left-1/2 -translate-x-1/2 pointer-events-none z-10">
+        {/* Sun in Day / Moon in Night Mode */}
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 pointer-events-none z-10">
           <div className="dark:hidden animate-pulse">
             <SunVector size={58} />
           </div>
           <div className="hidden dark:block animate-pulse">
-            <MoonVector size={58} />
+            <MoonVector size={62} />
           </div>
         </div>
 
+        {/* Clouds - Visible in both Day Mode and Night Mode with gentle night luminescence */}
         {/* Top-Left Cloud */}
-        <div className="absolute top-3 left-3 sm:top-5 sm:left-10 opacity-80">
-          <div className="dark:hidden">
-            <CloudVector size={56} />
-          </div>
-          <div className="hidden dark:flex items-center gap-1.5 text-amber-200">
-            <Sparkles className="w-5 h-5 text-amber-300" />
-          </div>
+        <div className="absolute top-3 left-3 sm:top-5 sm:left-10 opacity-85 dark:opacity-40">
+          <CloudVector size={58} className="dark:text-indigo-200" />
         </div>
 
-        {/* Top-Right Cloud - Positioned comfortably below the header buttons */}
-        <div className="absolute top-14 right-4 sm:right-12 opacity-75">
-          <div className="dark:hidden">
-            <CloudVector size={50} />
-          </div>
+        {/* Top-Right Cloud */}
+        <div className="absolute top-12 right-4 sm:right-14 opacity-80 dark:opacity-35">
+          <CloudVector size={52} className="dark:text-indigo-200" />
         </div>
 
-        {/* Floating Math Bubbles - Positioned Safely in Background Corners */}
+        {/* Mid-Left Floating Cloud (Adds depth in landscape and night sky) */}
+        <div className="hidden sm:block absolute top-28 left-8 opacity-70 dark:opacity-30">
+          <CloudVector size={42} />
+        </div>
+
+        {/* Mid-Right Floating Cloud */}
+        <div className="hidden sm:block absolute top-32 right-10 opacity-70 dark:opacity-30">
+          <CloudVector size={44} />
+        </div>
+
+        {/* NIGHT MODE STARS CONSTELLATION - Glowing & Twinkling across the night sky */}
+        <div className="hidden dark:block absolute inset-0 pointer-events-none">
+          {/* Top Star Clusters */}
+          <div className="absolute top-3 left-24 animate-pulse">
+            <StarVector size={18} fill="#fde047" />
+          </div>
+          <div className="absolute top-6 left-1/3 animate-ping">
+            <div className="w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_8px_#ffffff]"></div>
+          </div>
+          <div className="absolute top-4 right-32 animate-pulse delay-300">
+            <StarVector size={16} fill="#fef08a" />
+          </div>
+          <div className="absolute top-8 right-1/4 animate-pulse delay-700">
+            <StarVector size={14} fill="#a5f3fc" />
+          </div>
+
+          {/* Stars around the Moon */}
+          <div className="absolute top-4 left-[46%] animate-bounce">
+            <Sparkles className="w-4 h-4 text-amber-300 drop-shadow-[0_0_6px_#fde047]" />
+          </div>
+          <div className="absolute top-3 left-[55%] animate-pulse delay-500">
+            <Sparkles className="w-3.5 h-3.5 text-yellow-200 drop-shadow-[0_0_4px_#fef08a]" />
+          </div>
+
+          {/* Mid-Sky Twinkling Stars */}
+          <div className="absolute top-20 left-6 animate-pulse delay-200">
+            <StarVector size={20} fill="#fde047" />
+          </div>
+          <div className="absolute top-28 left-20 animate-pulse delay-1000">
+            <div className="w-2 h-2 bg-amber-200 rotate-45 shadow-[0_0_6px_#fde047]"></div>
+          </div>
+          <div className="absolute top-24 right-8 animate-pulse delay-500">
+            <StarVector size={22} fill="#fde047" />
+          </div>
+          <div className="absolute top-32 right-24 animate-ping delay-700">
+            <div className="w-1.5 h-1.5 bg-cyan-200 rounded-full shadow-[0_0_6px_#67e8f9]"></div>
+          </div>
+
+          {/* Lower Sky Stars above Hills */}
+          <div className="absolute top-44 left-12 animate-pulse delay-300">
+            <StarVector size={15} fill="#fef08a" />
+          </div>
+          <div className="absolute top-48 left-1/4 animate-pulse delay-800">
+            <StarVector size={13} fill="#a5f3fc" />
+          </div>
+          <div className="absolute top-44 right-16 animate-pulse delay-400">
+            <StarVector size={16} fill="#fde047" />
+          </div>
+          <div className="absolute top-52 right-1/3 animate-pulse delay-600">
+            <div className="w-2 h-2 bg-yellow-100 rotate-45 shadow-[0_0_6px_#ffffff]"></div>
+          </div>
+
+          {/* Additional background subtle twinkling points */}
+          <div className="absolute top-16 left-1/2 w-1 h-1 bg-white rounded-full opacity-80 animate-ping delay-500"></div>
+          <div className="absolute top-36 left-[38%] w-1.5 h-1.5 bg-yellow-200 rounded-full opacity-70 animate-pulse"></div>
+          <div className="absolute top-38 right-[36%] w-1 h-1 bg-white rounded-full opacity-80 animate-ping delay-1000"></div>
+        </div>
+
+        {/* Floating Math Bubbles in Corners */}
         <div className="hidden md:block absolute top-20 left-4 bg-purple-600/90 text-white font-black px-3 py-1.5 rounded-2xl border-2 border-white shadow-md text-sm md:text-base animate-bounce opacity-80">
           2 × 3 = 6
         </div>
@@ -113,46 +176,35 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         </div>
       </header>
 
-      {/* Central Content Area - Responsive for both Portrait and Landscape Viewports */}
-      <main className="relative z-10 w-full max-w-5xl flex-1 flex flex-col landscape:flex-row items-center justify-center landscape:justify-between px-3 sm:px-6 py-1 gap-2 sm:gap-4">
-        {/* Left Side in Landscape / Top in Portrait: Logo & Mini-games */}
+      {/* Central Content Area */}
+      <main className="relative z-10 w-full max-w-5xl flex-1 flex flex-col landscape:flex-row items-center justify-center landscape:justify-between px-3 sm:px-6 py-2 gap-4 sm:gap-6 my-auto">
+        {/* Left Side in Landscape / Top in Portrait: Logo & Mini-games matching user screenshot */}
         <div className="flex flex-col items-center landscape:items-start text-center landscape:text-left max-w-md landscape:max-w-lg">
-          {/* Mini Tag */}
-          <div className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-emerald-600 text-white font-black text-[10px] sm:text-xs uppercase tracking-wider shadow-xs border border-emerald-300 mb-1">
-            <Sparkles className="w-3 h-3 text-amber-300" />
-            Learn • Play • Grow
+          {/* Top Pill Badge */}
+          <div className="inline-flex items-center justify-center px-5 sm:px-6 py-1 sm:py-1.5 rounded-full bg-[#a7f3d0] dark:bg-[#064e3b] text-[#0f766e] dark:text-[#a7f3d0] font-black text-xs sm:text-sm tracking-widest uppercase shadow-2xs mb-2">
+            LEARN • PLAY • GROW
           </div>
 
-          {/* 3D Playful Title Logo */}
-          <div className="flex items-center gap-2 sm:gap-3 my-0.5">
-            {/* 3D Multiplication Icon Badge */}
-            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-tr from-rose-500 via-pink-500 to-rose-400 text-white font-black text-2xl sm:text-3xl md:text-4xl flex items-center justify-center shadow-[0_4px_0_#9f1239,0_8px_14px_rgba(225,29,72,0.3)] border-2 border-white/90 transform -rotate-6 hover:rotate-0 transition-transform duration-300 shrink-0">
-              <span className="translate-y-[-1px]">×</span>
+          {/* 3D Multi Play! Title Logo Group */}
+          <div className="flex items-center justify-center landscape:justify-start gap-2.5 sm:gap-3.5 my-1">
+            {/* Chunky Burgundy / Plum Multiplication Icon Card */}
+            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-[#831843] dark:bg-[#701a75] border-3 sm:border-4 border-[#3f071b] dark:border-[#2e022d] shadow-[0_5px_0_#2b0412] dark:shadow-[0_5px_0_#1a011a] flex items-center justify-center text-[#fef08a] font-black text-3xl sm:text-4xl md:text-5xl select-none shrink-0 transform -rotate-3 hover:rotate-0 transition-transform">
+              <span className="translate-y-[-2px] leading-none">×</span>
             </div>
 
-            {/* Vibrant 3D Playful Lettering */}
-            <div className="flex items-baseline font-['Fredoka',sans-serif] font-black tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl select-none">
-              <span className="text-amber-500 dark:text-amber-400 drop-shadow-[0_3px_0_#b45309] dark:drop-shadow-[0_3px_0_#78350f]">
-                Multi
-              </span>
-              <span className="ml-1.5 sm:ml-2 text-emerald-500 dark:text-emerald-400 drop-shadow-[0_3px_0_#047857] dark:drop-shadow-[0_3px_0_#064e3b]">
-                Play
-              </span>
-              <span className="ml-0.5 text-rose-500 dark:text-rose-400 drop-shadow-[0_3px_0_#be123c] dark:drop-shadow-[0_3px_0_#881337] animate-bounce">
-                !
-              </span>
-            </div>
+            {/* 3D Multi Play! Typography */}
+            <h1 className="multi-play-3d-title text-4xl sm:text-5xl md:text-6xl font-black font-['Fredoka',sans-serif] tracking-tight select-none">
+              Multi Play!
+            </h1>
           </div>
 
           {/* Subtitle */}
-          <div className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs border border-white/80 dark:border-slate-700 shadow-2xs my-1">
-            <p className="text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs md:text-sm font-extrabold">
-              A colorful times-table adventure made just for you!
-            </p>
-          </div>
+          <p className="text-[#1e293b] dark:text-slate-100 text-sm sm:text-base md:text-lg font-bold tracking-tight text-center landscape:text-left mt-1.5">
+            A colorful times-table adventure made just for you.
+          </p>
 
           {/* Game Mini Vector Badges Grid */}
-          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full max-w-sm sm:max-w-md mt-1">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full max-w-sm sm:max-w-md mt-3">
             <div className="bg-white/85 dark:bg-slate-800/85 backdrop-blur-sm p-1.5 rounded-xl border border-amber-300/80 dark:border-slate-600 flex flex-col items-center shadow-xs">
               <FishVector size={22} variant={0} className="mb-0.5" />
               <span className="text-[9px] sm:text-[10px] md:text-xs font-black text-slate-950 dark:text-white truncate w-full text-center">Fish Catch</span>
@@ -185,7 +237,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
             <span>Let's Play!</span>
           </button>
           <span className="hidden landscape:block text-[10px] font-bold text-slate-800/80 dark:text-slate-200/80 mt-2">
-            1× to 12× Practice & Games
+            1× to 12× Tables & Games
           </span>
         </div>
       </main>
@@ -193,10 +245,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
       {/* Bottom Spacer */}
       <footer className="w-full max-w-4xl z-20 py-1 text-center shrink-0">
         <p className="text-[10px] sm:text-xs font-bold text-slate-800/80 dark:text-slate-300/80">
-          Practice 1× to 12× Tables with Mini-Games
+          Practice 1× to 12× Multiplication Tables with Fun Games
         </p>
       </footer>
     </div>
   );
 };
-

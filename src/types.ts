@@ -1,10 +1,24 @@
-export type GameMode = 'fish' | 'butterfly' | 'quiz' | 'balloon' | 'harvest' | 'memorize';
+export type GameMode =
+  | 'fish'
+  | 'butterfly'
+  | 'quiz'
+  | 'balloon'
+  | 'harvest'
+  | 'rocket'
+  | 'match'
+  | 'memorize';
+
+export type MathOperation = 'multiply';
 
 export interface Question {
-  table: number;
-  multiplier: number;
+  num1: number;
+  num2: number;
+  operation: MathOperation;
+  symbol: string;
   answer: number;
   options: number[];
+  table: number;
+  multiplier: number;
 }
 
 export interface GameSettings {
@@ -19,7 +33,7 @@ export interface GameStats {
   gamesPlayed: number;
   totalCorrect: number;
   bestStreak: number;
-  tableMastery: Record<number, number>; // table -> count of perfect runs
+  tableMastery: Record<string, number>;
   unlockedStickers: string[];
 }
 

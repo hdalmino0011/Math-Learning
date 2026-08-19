@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GameMode, GameStats } from './types';
+import { GameMode, GameStats, MathOperation } from './types';
 import { soundManager } from './utils/audio';
 import { SplashScreen } from './components/SplashScreen';
 import { HomeScreen } from './components/HomeScreen';
@@ -14,6 +14,7 @@ type AppScreen = 'splash' | 'home' | 'tables' | 'game' | 'memorize' | 'results';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('splash');
+  const [selectedOperation, setSelectedOperation] = useState<MathOperation>('multiply');
   const [selectedMode, setSelectedMode] = useState<GameMode>('fish');
   const [selectedTable, setSelectedTable] = useState<number>(2);
   const [lastScore, setLastScore] = useState<number>(0);
@@ -72,7 +73,7 @@ export default function App() {
           await orientation.lock('landscape');
         }
       } catch {
-        // Screen orientation locking might not be permitted without user gesture or on certain platforms
+        // Handled gracefully if browser forbids orientation lock
       }
     };
     lockLandscape();
@@ -142,6 +143,8 @@ export default function App() {
       if (selectedMode === 'butterfly' && score >= 8) newStickers.add('butterfly_hero');
       if (selectedMode === 'balloon' && score >= 8) newStickers.add('balloon_sniper');
       if (selectedMode === 'harvest' && score >= 8) newStickers.add('apple_harvester');
+      if (selectedMode === 'rocket' && score >= 8) newStickers.add('rocket_astronaut');
+      if (selectedMode === 'match' && score >= 8) newStickers.add('match_wizard');
       if (selectedMode === 'quiz' && score >= 8) newStickers.add('quiz_champion');
       if (selectedMode === 'memorize') newStickers.add('memorize_scholar');
 
@@ -170,7 +173,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen w-full font-sans antialiased text-slate-800 dark:text-slate-100 bg-sky-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen min-h-[100dvh] w-full font-sans antialiased text-slate-800 dark:text-slate-100 bg-sky-50 dark:bg-slate-900 transition-colors duration-300 overflow-y-auto overflow-x-hidden">
       {currentScreen === 'splash' && (
         <SplashScreen
           onStart={handleStartFromSplash}
@@ -187,12 +190,15 @@ export default function App() {
           onOpenBadges={() => setIsBadgesOpen(true)}
           soundMuted={soundMuted}
           onToggleMute={handleToggleMute}
+          selectedOperation={selectedOperation}
+          onSelectOperation={setSelectedOperation}
         />
       )}
 
       {currentScreen === 'tables' && (
         <TableSelectScreen
           mode={selectedMode}
+          operation={selectedOperation}
           onSelectTable={handleSelectTable}
           onBackToHome={() => {
             setCurrentScreen('home');
@@ -206,6 +212,7 @@ export default function App() {
         <GameScreen
           mode={selectedMode}
           table={selectedTable}
+          operation={selectedOperation}
           onFinishGame={handleFinishGame}
           onBackToTables={() => {
             setCurrentScreen('tables');
@@ -223,6 +230,7 @@ export default function App() {
       {currentScreen === 'memorize' && (
         <MemorizeScreen
           table={selectedTable}
+          operation={selectedOperation}
           onBackToTables={() => {
             setCurrentScreen('tables');
             soundManager.startMusic('menu');
@@ -242,6 +250,7 @@ export default function App() {
           total={lastTotal}
           mode={selectedMode}
           table={selectedTable}
+          operation={selectedOperation}
           onPlayAgain={() => {
             if (selectedMode === 'memorize') setCurrentScreen('memorize');
             else setCurrentScreen('game');

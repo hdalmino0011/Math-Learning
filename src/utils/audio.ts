@@ -201,6 +201,18 @@ class SoundEngine {
     this.playTone(220, 0.14, 0.06, 'sine', 0.25);
   }
 
+  public playLevelUp() {
+    this.playTone(392, 0.1, 0, 'sine', 0.15);
+    this.playTone(523.25, 0.1, 0.08, 'sine', 0.18);
+    this.playTone(659.25, 0.1, 0.16, 'sine', 0.2);
+    this.playTone(783.99, 0.25, 0.24, 'triangle', 0.25);
+  }
+
+  public playRocketLaunch() {
+    this.playNoise(0.4, 0, 0.5, 1200);
+    this.playTone(220, 0.3, 0.05, 'sawtooth', 0.15, 880);
+  }
+
   public playVictory() {
     const notes = [
       { f: 523.25, d: 0.12, t: 0 },
