@@ -9,6 +9,7 @@ import { MemorizeScreen } from './components/MemorizeScreen';
 import { ResultsScreen } from './components/ResultsScreen';
 import { SettingsModal } from './components/SettingsModal';
 import { BadgesModal } from './components/BadgesModal';
+import { RotateCw } from 'lucide-react';
 
 type AppScreen = 'splash' | 'home' | 'tables' | 'game' | 'memorize' | 'results';
 
@@ -63,6 +64,28 @@ export default function App() {
       localStorage.setItem('multiPlayDarkMode', String(darkMode));
     } catch {}
   }, [darkMode]);
+
+  // Orientation State
+  const [isPortrait, setIsPortrait] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerHeight > window.innerWidth;
+    }
+    return false;
+  });
+  const [isFlipped, setIsFlipped] = useState<boolean>(false);
+
+  useEffect(() => {
+    const updateOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+    updateOrientation();
+    window.addEventListener('resize', updateOrientation);
+    window.addEventListener('orientationchange', updateOrientation);
+    return () => {
+      window.removeEventListener('resize', updateOrientation);
+      window.removeEventListener('orientationchange', updateOrientation);
+    };
+  }, []);
 
   // Request Landscape Orientation lock if supported by device/browser
   useEffect(() => {
@@ -179,7 +202,27 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen min-h-[100dvh] w-full font-sans antialiased text-slate-800 dark:text-slate-100 bg-sky-50 dark:bg-slate-900 transition-colors duration-300 overflow-y-auto overflow-x-hidden">
+    <div
+      id="multi-play-root"
+      className={`app-orientation-container w-full h-full min-h-screen min-h-[100dvh] font-sans antialiased text-slate-800 dark:text-slate-100 bg-sky-50 dark:bg-slate-900 transition-colors duration-300 overflow-y-auto overflow-x-hidden ${
+        isPortrait ? 'is-portrait-forced-landscape' : ''
+      } ${isFlipped ? 'is-flipped' : ''}`}
+    >
+      {/* Floating Orientation Flip Button (visible when held in portrait to easily switch left/right landscape) */}
+      {isPortrait && (
+        <button
+          onClick={() => {
+            soundManager.playTap();
+            setIsFlipped((prev) => !prev);
+          }}
+          className="fixed top-2 right-2 z-50 p-2 bg-slate-900/80 hover:bg-slate-900 text-white rounded-xl shadow-lg border border-amber-400/80 backdrop-blur-xs flex items-center gap-1.5 text-[11px] font-black cursor-pointer active:scale-95 transition-all opacity-70 hover:opacity-100"
+          title="Flip Landscape View"
+        >
+          <RotateCw className="w-3.5 h-3.5" />
+          <span>Flip Side</span>
+        </button>
+      )}
+
       {currentScreen === 'splash' && (
         <SplashScreen
           onStart={handleStartFromSplash}
