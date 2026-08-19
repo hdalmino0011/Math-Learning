@@ -70,19 +70,25 @@ export default function App() {
       try {
         const orientation = screen.orientation as unknown as { lock?: (mode: string) => Promise<void> };
         if (orientation && typeof orientation.lock === 'function') {
-          await orientation.lock('landscape');
+          await orientation.lock('landscape').catch(() => {});
         }
       } catch {
-        // Handled gracefully if browser forbids orientation lock
+        // Handled gracefully if browser forbids orientation lock without gesture
       }
     };
     lockLandscape();
   }, []);
 
-  // Global user interaction listener to resume audio context seamlessly
+  // Global user interaction listener to resume audio context and lock landscape seamlessly
   useEffect(() => {
-    const handleGesture = () => {
+    const handleGesture = async () => {
       soundManager.unlockAudio();
+      try {
+        const orientation = screen.orientation as unknown as { lock?: (mode: string) => Promise<void> };
+        if (orientation && typeof orientation.lock === 'function') {
+          await orientation.lock('landscape').catch(() => {});
+        }
+      } catch {}
     };
     window.addEventListener('pointerdown', handleGesture, { passive: true });
     window.addEventListener('keydown', handleGesture);

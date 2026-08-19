@@ -26,6 +26,12 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   const handlePlayClick = () => {
     soundManager.unlockAudio();
     soundManager.playStartGame();
+    try {
+      const orientation = screen.orientation as unknown as { lock?: (mode: string) => Promise<void> };
+      if (orientation && typeof orientation.lock === 'function') {
+        orientation.lock('landscape').catch(() => {});
+      }
+    } catch {}
     onStart();
   };
 
