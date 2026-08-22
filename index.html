@@ -29,10 +29,15 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js')
+            .catch(() => {
+              // Graceful fallback if hosted without build step
+              return navigator.serviceWorker.register('./public/sw.js');
+            })
             .then((reg) => {
-              console.log('Multi Play Service Worker registered:', reg.scope);
-              // Proactively check for updates on each visit
-              reg.update();
+              if (reg) {
+                console.log('Multi Play Service Worker active:', reg.scope);
+                reg.update();
+              }
             })
             .catch((err) => {
               console.log('Service Worker registration skipped:', err);
@@ -43,6 +48,6 @@
   </head>
   <body class="bg-sky-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 antialiased select-none font-sans overflow-x-hidden">
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
