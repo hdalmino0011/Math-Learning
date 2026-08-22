@@ -11,11 +11,18 @@
     color-scheme: dark;
   }
 
-  html, body, #root {
+  html, body {
     height: 100%;
     width: 100%;
-    overflow: hidden;
+    margin: 0;
+    padding: 0;
     overscroll-behavior: none;
+  }
+
+  #root {
+    min-height: 100%;
+    width: 100%;
+    position: relative;
   }
 
   body {
@@ -315,18 +322,23 @@
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
+    width: 100vh !important;
     width: 100dvh !important;
+    height: 100vw !important;
     height: 100dvw !important;
+    max-width: 100vh !important;
     max-width: 100dvh !important;
+    max-height: 100vw !important;
     max-height: 100dvw !important;
-    transform-origin: top left !important;
+    transform-origin: 0 0 !important;
     transform: rotate(90deg) translateY(-100%) !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    z-index: 40;
+    z-index: 50;
   }
 
   .app-orientation-container.is-flipped {
+    transform-origin: 0 0 !important;
     transform: rotate(270deg) translateX(-100%) !important;
   }
 }
